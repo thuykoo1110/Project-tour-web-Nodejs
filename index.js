@@ -10,7 +10,7 @@ app.set('views', path.join(__dirname, "views"));
 app.set('view engine', 'pug');
 
 //Thiết lập thư mục chứa file tĩnh (static file)
-app.use(express.static(path.join(__dirname, "public"))); //vì chạy trên onl ko hỉu nên mới có path join
+app.use(express.static(path.join(__dirname, "public"))); //vì deploy onl lỗi nên mới có path join
 app.get('/', (req, res) => {
     res.render('client/pages/home', {
         pageTitle: 'Trang chủ'
@@ -21,7 +21,8 @@ app.get('/tour', (req, res) => {
     res.render('client/pages/tour-list', {
         pageTitle: 'Danh sách tour'
     })
-})
+}) //app.get(path, callback)
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
