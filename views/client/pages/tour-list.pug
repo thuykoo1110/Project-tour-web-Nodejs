@@ -1,8 +1,8 @@
-doctype html
-html
-    head
-        title #{pageTitle}
-    body
-        div Header
-        h1 #{pageTitle}
-        div Footer
+extends ../layouts/default.pug
+
+block main
+    h1 #{pageTitle}
+
+    ul
+        each item in tourList
+            li #{item.name} (Phương tiện:  #{item.vehicle})
