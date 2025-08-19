@@ -6,8 +6,4 @@ module.exports.list = async (req, res) => {
         pageTitle: 'Danh sách tour',
         tourList: tourList
     })
-
-    res.render('client/pages/tour-detail', {
-        pageTitle: 'Chi tiết tour'
-    })
 }
