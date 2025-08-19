@@ -21,4 +21,3 @@ app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
 
-// caiphuongthuy1110 zYaFDpZqNNCGbXK5: mongodb database user
