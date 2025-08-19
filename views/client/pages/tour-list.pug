@@ -1,20 +1,10 @@
 extends ../layouts/default.pug
 
 include ../mixins/product.pug
+include ../mixins/box-breadcrumb.pug
 block main
   // Breadcrumb
-  .box-breadcrumb
-    .inner-image
-      img(
-        alt="" 
-        src="assets/images/banner-6.jpg"
-      )
-    .inner-content
-      .container
-        h1.inner-title Tour Nước Ngoài
-        .inner-list
-          a(href="#") Trang Chủ
-          a(href="#") Tour Nước Ngoài
+  +box-breadcrumb()
   // End Breadcrumb
   // Section 9
   .section-9
