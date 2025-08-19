@@ -4,6 +4,7 @@ const app = express()
 const path = require('path')
 const port = 3000
 const clientRoutes = require("./routes/client/index.route")
+const adminRoutes=require('./routes/admin/index.route')
 const databaseConfig = require("./config/database.config")
 
 databaseConfig.connect();
@@ -17,6 +18,7 @@ app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, "public"))); //vì deploy onl lỗi nên mới có path join
 
 app.use("/", clientRoutes);
+app.use('/admin',adminRoutes);
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
