@@ -6,6 +6,7 @@ const port = 3000
 const clientRoutes = require("./routes/client/index.route")
 const adminRoutes=require('./routes/admin/index.route')
 const databaseConfig = require("./config/database.config")
+const variableConfig=require("./config/variable.config")
 
 databaseConfig.connect();
 // Thiết lập thư mục chứa code giao diện (view) TEMPLATE ENGINE
@@ -17,8 +18,10 @@ app.set('view engine', 'pug');
 //Thiết lập thư mục chứa file tĩnh (static file)
 app.use(express.static(path.join(__dirname, "public"))); //vì deploy onl lỗi nên mới có path join
 
+app.locals.pathAdmin=variableConfig.pathAdmin
+
 app.use("/", clientRoutes);
-app.use('/admin',adminRoutes);
+app.use(`/${variableConfig.pathAdmin}`,adminRoutes);
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
