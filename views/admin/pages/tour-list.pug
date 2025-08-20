@@ -1,8 +1,5 @@
 extends ../layouts/default.pug
 
-block title
-  title Quản lý tour
-
 block main
   h1.box-title Quản lý tour
 
@@ -57,9 +54,9 @@ block main
         <i class="fa-solid fa-magnifying-glass"></i>
         input(type="text" placeholder="Tìm kiếm")
       .inner-button-create
-        button + Tạo mới
+        a(href=`/${pathAdmin}/tour/create`) + Tạo mới
       .inner-button-trash
-        button Thùng rác
+        a(href=`/${pathAdmin}/tour/trash`) Thùng rác
   //- End Section 5
 
   //- Section 6
