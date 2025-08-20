@@ -605,3 +605,18 @@ if(profileChangePasswordForm) {
   ;
 }
 // End Profile Change Password Form
+
+//Sider
+const sider=document.querySelector(".sider");
+if(sider){
+  const menuList=sider.querySelectorAll("a");
+  const pathNameCurrent=location.pathname;
+  const splitPathNameCurrent=pathNameCurrent.split("/");
+  menuList.forEach(item =>{
+    const href=item.getAttribute("href");
+    const splitHref=href.split("/");
+    if(splitPathNameCurrent[1]==splitHref[1]&&splitPathNameCurrent[2]==splitHref[2]){
+      item.classList.add("active");
+    }
+  })
+}
