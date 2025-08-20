@@ -27,3 +27,11 @@ module.exports.resetPassword = async(req,res)=>{
     pageTitle: "Đặt lại mật khẩu"
   })
 }
+
+module.exports.registerPost = async (req,res)=>{
+  console.log(req.body);
+  res.json({
+    code: "success",
+    message: "Successfully register"
+  })
+}

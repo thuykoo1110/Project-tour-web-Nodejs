@@ -1,3 +1,6 @@
+// const { json } = require('express');
+// const { pathAdmin } = require("../../../../config/variable.config");
+
 // Login Form
 const loginForm = document.querySelector("#login-form");
 if(loginForm) {
@@ -122,9 +125,23 @@ if(registerForm) {
       const email = event.target.email.value;
       const password = event.target.password.value;
 
-      console.log(fullName);
-      console.log(email);
-      console.log(password);
+      const dataFinal={
+        fullName: fullName,
+        email: email,
+        password: password
+      };
+
+      fetch(`/${pathAdmin}/account/register`,{
+        method: "POST",
+        headers:{
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(dataFinal)
+      })// send data to backend
+        .then(res=>res.json())
+        .then(data=>{
+          console.log(data);
+        })
     })
   ;
 }

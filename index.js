@@ -22,6 +22,7 @@ app.locals.pathAdmin=variableConfig.pathAdmin
 
 app.use("/", clientRoutes);
 app.use(`/${variableConfig.pathAdmin}`,adminRoutes);
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
