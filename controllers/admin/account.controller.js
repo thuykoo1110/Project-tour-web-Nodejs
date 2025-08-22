@@ -1,3 +1,5 @@
+const accountAdmin = require("../../models/account-admin.model")
+
 module.exports.login=async (req,res)=>{
   res.render('admin/pages/login',{
     pageTitle: "Đăng nhập"
@@ -29,9 +31,29 @@ module.exports.resetPassword = async(req,res)=>{
 }
 
 module.exports.registerPost = async (req,res)=>{
-  console.log(req.body);
+  const existAccount = await accountAdmin.findOne({
+    email: req.body.email
+  })
+  //check existing account
+  if(existAccount){
+    res.json({
+    code: "error",
+    message: "Email has existed"
+  })
+    return;
+  }
+
+  req.body.status="initial";
+  const newAccount = new accountAdmin(req.body); //ghi data vào database
+  await newAccount.save();  //await: để đơi lưu dữ liệu xong mới chạy xún bên dứi
   res.json({
     code: "success",
     message: "Successfully register"
+  })
+}
+
+module.exports.registerInitial = async(req,res)=>{
+  res.render('admin/pages/register-initial',{
+    pageTitle: "Tài khoản đã được khởi tạo"
   })
 }

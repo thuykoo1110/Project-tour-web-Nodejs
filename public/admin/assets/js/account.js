@@ -140,7 +140,14 @@ if(registerForm) {
       })// send data to backend
         .then(res=>res.json())
         .then(data=>{
-          console.log(data);
+          // console.log(data);
+          if(data.code=="error"){
+            alert(data.message);
+          }
+
+          if(data.code=="success"){
+            window.location.href=`/${pathAdmin}/account/register-initial`; //chuyển user sang trang đk thành công
+          }
         })
     })
   ;

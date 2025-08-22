@@ -20,6 +20,7 @@ app.use(express.static(path.join(__dirname, "public"))); //vì deploy onl lỗi 
 
 app.locals.pathAdmin=variableConfig.pathAdmin
 
+app.use(express.json());  //send data to backend
 app.use("/", clientRoutes);
 app.use(`/${variableConfig.pathAdmin}`,adminRoutes);
 
