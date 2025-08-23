@@ -48,8 +48,25 @@ if(loginForm) {
       const dataFinal={
         email: email,
         password: password,
-        rememberPassword: rememberPassword
       }
+
+      fetch(`/${pathAdmin}/account/login`,{
+        method: 'POST',
+        headers: {
+          "Content-type" : "application/json"
+        },
+        body: JSON.stringify(dataFinal)
+      })
+        .then(res=> res.json())
+        .then(data=>{
+          if(data.code=="error"){
+            notify.error(data.message);
+          }
+          else if(data.code == "success"){
+            drawNotify(data.code,data.message);
+            window.location.href(`/${pathAdmin}/dashboard`);
+          }
+        })
     })
   ;
 }

@@ -7,6 +7,43 @@ module.exports.login=async (req,res)=>{
   })
 }
 
+module.exports.loginPost = async (req,res) => {
+  const { email, password }= req.body;
+
+  const existAccount = await accountAdmin.findOne({
+    email: req.body.email
+  })
+  
+  if(!existAccount){
+    res.json()({
+    code: "error",
+    message: "Email hasn't existed!"
+    })
+    return;
+  }
+
+  const isValidPassword = await bcrypt.compare(password,existAccount.password);
+  if(!isValidPassword){
+    res.json()({
+    code: "error",
+    message: "Password is incorrect!"
+  })
+    return;
+  }
+
+  if(existAccount.status != "active"){
+    res.json()({
+    code: "error",
+    message: "The account has not been activated!"
+    })
+    return;
+  }
+  res.json()({
+    code: "success",
+    message: "Successfully login!"
+  })
+}
+
 module.exports.register = async (req,res)=>{
   res.render('admin/pages/register',{
     pageTitle: "Đăng kí"
@@ -35,6 +72,7 @@ module.exports.registerPost = async (req,res)=>{
   const newAccount = new accountAdmin(req.body); //ghi data vào database
   await newAccount.save();  //await: để đơi lưu dữ liệu xong mới chạy xún bên dứi
   
+  console.log(req.body);
   res.json({
     code: "success",
     message: "Successfully register"

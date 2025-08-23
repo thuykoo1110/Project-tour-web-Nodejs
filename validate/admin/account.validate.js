@@ -57,3 +57,31 @@ module.exports.registerPost= async (req,res,next)=>{
   }
   next()
 } //hàm trung gian
+
+module.exports.loginPost= async (req,res,next)=>{
+  const schema = Joi.object({
+    email :Joi.string()
+        .email()
+        .required()
+        .messages({
+          "string.empty": "Vui lòng nhập lại"
+        }),
+    password: Joi.string()
+        .required()
+        .messages({
+          "string.empty": "Vui lòng nhập lại"
+        })
+  })
+
+  const {error} = schema.validate(req.body);
+  if(error){
+    const errorMessage=error.details[0].message;
+
+    res.json({
+      code: "error",
+      message: errorMessage
+    })
+    return;
+  }
+  next()
+}
