@@ -159,8 +159,7 @@ if(registerForm) {
           console.log(data);
           if(data.code=="error"){
             notify.error(data.message);
-          }
-
+          } //object int controller.js
           if(data.code=="success"){
             drawNotify(data.code, data.message)
             window.location.href=`/${pathAdmin}/account/register-initial`; //chuyển user sang trang đk thành công
