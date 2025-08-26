@@ -1,6 +1,6 @@
 const accountAdmin = require("../../models/account-admin.model")
 const bcrypt=require("bcryptjs")
-
+const jwt=require("jsonwebtoken")
 module.exports.login=async (req,res)=>{
   res.render('admin/pages/login',{
     pageTitle: "Đăng nhập"
@@ -11,11 +11,11 @@ module.exports.loginPost = async (req,res) => {
   const { email, password }= req.body;
 
   const existAccount = await accountAdmin.findOne({
-    email: req.body.email
+    email: email
   })
   
   if(!existAccount){
-    res.json()({
+    res.json({
     code: "error",
     message: "Email hasn't existed!"
     })
@@ -24,21 +24,39 @@ module.exports.loginPost = async (req,res) => {
 
   const isValidPassword = await bcrypt.compare(password,existAccount.password);
   if(!isValidPassword){
-    res.json()({
-    code: "error",
-    message: "Password is incorrect!"
-  })
+    res.json({
+  code: "error",
+  message: "Password is incorrect!"
+});
+
     return;
   }
 
   if(existAccount.status != "active"){
-    res.json()({
+    res.json({
     code: "error",
     message: "The account has not been activated!"
     })
     return;
   }
-  res.json()({
+  const token = jwt.sign({
+  id: existAccount.id,
+  email: existAccount.email
+  }, 
+  process.env.JWT_SECRET,
+  {
+    expiresIn: "1d"
+  }
+)
+
+  console.log(token);
+  res.cookie("token",token,{
+    maxAge: 24*60*60*1000, //1 day
+    httpOnly: true,
+    sameSite: "strict"
+  })
+
+  res.json({
     code: "success",
     message: "Successfully login!"
   })

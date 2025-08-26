@@ -64,7 +64,7 @@ if(loginForm) {
           }
           else if(data.code == "success"){
             drawNotify(data.code,data.message);
-            window.location.href(`/${pathAdmin}/dashboard`);
+            window.location.href=`/${pathAdmin}/dashboard`;
           }
         })
     })
