@@ -8,17 +8,18 @@ const userRoutes=require('./user.route')
 const contactRoutes=require('./contact.route')
 const settingRoutes=require('./setting.route')
 const profileRoutes=require('./profile.route')
+const authMiddlewares = require("../../middleware/auth.middleware")
 
 router.use('/account',accountRoutes)
-router.use('/dashboard',dashboardRoutes)
-router.use('/category',categoryRoutes)
-router.use('/tour',tourRoutes)
-router.use('/order',orderRoutes)
-router.use('/user',userRoutes)
-router.use('/contact',contactRoutes)
-router.use('/setting',settingRoutes)
-router.use('/profile',profileRoutes)
-router.use((req,res)=>{
+router.use('/dashboard',authMiddlewares.verifyToken, dashboardRoutes)
+router.use('/category', authMiddlewares.verifyToken,categoryRoutes)
+router.use('/tour', authMiddlewares.verifyToken, tourRoutes)
+router.use('/order', authMiddlewares.verifyToken, orderRoutes)
+router.use('/user',authMiddlewares.verifyToken, userRoutes)
+router.use('/contact', authMiddlewares.verifyToken, contactRoutes)
+router.use('/setting',authMiddlewares.verifyToken, settingRoutes)
+router.use('/profile', authMiddlewares.verifyToken, profileRoutes)
+router.use(authMiddlewares.verifyToken, (req,res)=>{
   res.render('admin/pages/error-404',{
     pageTitle: "404 not found"
   })
