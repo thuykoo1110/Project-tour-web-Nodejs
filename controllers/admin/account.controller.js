@@ -172,14 +172,14 @@ module.exports.otpPassword = async (req,res)=>{
 module.exports.otpPasswordPost = async (req,res) => {
   const { email, otp } = req.body;
 
-  const existRecord = forgotPassword.findOne({
+  const existRecord = await forgotPassword.findOne({
     email: email,
     otp: otp
   })
 
   if(!existRecord){
     res.json({
-      code: "success",
+      code: "error",
       message: "Mã OTP không chính xác!"
     })
     return;
@@ -217,7 +217,25 @@ module.exports.resetPassword = async(req,res)=>{
     pageTitle: "Đặt lại mật khẩu"
   })
 }
+module.exports.resetPasswordPost = async (req,res) =>{
+  const { password }= req.body;
 
+  //Encode password
+  const salt = await bcrypt.genSalt(10);
+  const hashPassword = await bcrypt.hash(password, salt);
+
+  console.log(hashPassword);
+  await accountAdmin.updateOne({
+    _id: req.account.id},
+  {
+    password: hashPassword
+  }) //tham số 1 là đặc trưng của accout(vd id) //tham số thứ 2 là cái update
+
+  res.json({
+    code: "success",
+    message: "Đổi mật khẩu thành công!"
+  })
+}
 module.exports.logoutPost = async(req,res)=>{
   res.clearCookie("token");
   res.json({

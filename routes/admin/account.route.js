@@ -1,7 +1,7 @@
 const router=require('express').Router()
 const accountController=require('../../controllers/admin/account.controller')
 const accountValidate=require('../../validate/admin/account.validate')
-
+const authMiddleware = require('../../middleware/auth.middleware')
 router.get('/login',accountController.login)
 router.post('/login',accountValidate.loginPost,accountController.loginPost)
 
@@ -15,6 +15,13 @@ router.get('/otp-password',accountController.otpPassword)
 router.post('/otp-password',accountValidate.otpPasswordPost, accountController.otpPasswordPost)
 
 router.get('/reset-password',accountController.resetPassword)
+router.post(
+  '/reset-password', 
+  authMiddleware.verifyToken,
+  accountValidate.resetPasswordPost, 
+  accountController.resetPasswordPost
+)
+
 router.get('/register-initial',accountController.registerInitial)
 
 router.post('/logout',accountController.logoutPost)
