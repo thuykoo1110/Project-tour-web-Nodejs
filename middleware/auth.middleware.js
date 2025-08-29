@@ -28,6 +28,8 @@ module.exports.verifyToken = async (req,res,next) => {
   }
 
   req.account = existAccount;
+
+  res.locals.account = existAccount; //lưu thông tin vào file pug
   next();
 }
   catch(error){
