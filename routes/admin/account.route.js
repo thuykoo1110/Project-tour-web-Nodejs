@@ -9,6 +9,8 @@ router.get('/register',accountController.register)
 router.post('/register',accountValidate.registerPost ,accountController.registerPost) //accountvalidate: hàm trung gian
 
 router.get('/forgot-password',accountController.forgotPassword)
+router.post('/forgot-password',accountValidate.forgotPasswordPost,accountController.forgotPasswordPost)
+
 router.get('/otp-password',accountController.otpPassword)
 router.get('/reset-password',accountController.resetPassword)
 router.get('/register-initial',accountController.registerInitial)

@@ -1,6 +1,10 @@
 const accountAdmin = require("../../models/account-admin.model")
 const bcrypt=require("bcryptjs")
 const jwt=require("jsonwebtoken")
+const generateHelper= require('../../helpers/generate.helper')
+const forgotPassword = require('../../models/forgot-password.model')
+const mailHelper = require('../../helpers/mail.hepler')
+
 module.exports.login=async (req,res)=>{
   res.render('admin/pages/login',{
     pageTitle: "Đăng nhập"
@@ -28,7 +32,6 @@ module.exports.loginPost = async (req,res) => {
   code: "error",
   message: "Password is incorrect!"
 });
-
     return;
   }
 
@@ -106,6 +109,57 @@ module.exports.registerInitial = async(req,res)=>{
 module.exports.forgotPassword = async (req,res)=>{
   res.render('admin/pages/forgot-password',{
     pageTitle: "Quên mật khẩu"
+  })
+}
+
+module.exports.forgotPasswordPost = async (req,res)=>{
+  const {email}=req.body;
+
+  // Kiểm tra email có trong database ko
+  const existAccount = await accountAdmin.findOne({
+    email: email,
+    status: "active"
+  })
+  if(!existAccount){
+    res.json({
+      code: "error",
+      message: "Email has not existed!"
+    })
+    return;
+  }
+
+  //Kiểm tra email đã tồn tại trong ForgotPassword collection chưa
+  const existEmailInForgotPassword = await forgotPassword.findOne({
+    email: email
+  })
+
+  if(existEmailInForgotPassword){
+    res.json({
+      code: "error",
+      message: "Vui lòng gửi lại sau 5 phút!"
+    })
+    return;
+  }
+  //Otp create
+  const otp = generateHelper.getRandomNumber(6);
+  console.log(otp);
+  
+  //Lưu vào CSDL bản record mới: email, otp lưu trong 5 phút
+  const record = new forgotPassword({
+    email: email,
+    otp: otp,
+    expireAt: Date.now() +  5*60*1000
+  });
+  await record.save();
+
+  //Gửi mã otp tự dộng qua mail
+  const title = "Mã OTP lấy lại mật khẩu"
+  const content = `Mã OTP của bạn là <b>${otp}</b>. Mã OTP có hiệu lực trong 5 phút, vui lòng không cung cấp cho bất kì ai.`
+  mailHelper.sendMail(email,title,content);
+
+  res.json({
+    code: "success",
+    message: 'Đã gửi OTP qua email!'
   })
 }
 
