@@ -209,7 +209,7 @@ if(forgotPasswordForm) {
           }
           if(data.code=="success"){
             drawNotify(data.code, data.messages)
-            window.location.href = `/${pathAdmin}/account/otp-password`;
+            window.location.href = `/${pathAdmin}/account/otp-password?email=${email}`;
           }
         })
     })
@@ -231,7 +231,32 @@ if(otpPasswordForm) {
     ])
     .onSuccess((event) => {
       const otp = event.target.otp.value;
-      console.log(otp);
+
+      const urlParams = new URLSearchParams(location.search);
+      const email  =urlParams.get("email");
+
+      const dataFinal ={
+        email: email,
+        otp: otp
+      }
+      
+      fetch(`/${pathAdmin}/account/otp-password`,{
+        method: "POST",
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dataFinal)
+      })
+        .then(res=>res.json())
+        .then(data => {
+          if(data.code == "error"){
+            notify.error(data.message)
+          }
+          if(data.code=="success"){
+            drawNotify(data.code, data.message);
+            window.location.href = `/${pathAdmin}/account/reset-password`;
+          }
+        })
     })
   ;
 }

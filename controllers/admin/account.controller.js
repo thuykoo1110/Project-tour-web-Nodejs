@@ -169,6 +169,49 @@ module.exports.otpPassword = async (req,res)=>{
   })
 }
 
+module.exports.otpPasswordPost = async (req,res) => {
+  const { email, otp } = req.body;
+
+  const existRecord = forgotPassword.findOne({
+    email: email,
+    otp: otp
+  })
+
+  if(!existRecord){
+    res.json({
+      code: "success",
+      message: "Mã OTP không chính xác!"
+    })
+    return;
+  }
+
+  const account = await accountAdmin.findOne({
+    email: email
+  })
+
+  const token = jwt.sign(
+  {
+    id: account.id,
+    email: account.email
+  },
+  process.env.JWT_SECRET,
+  {
+    expiresIn: "1d"
+  }
+  )
+
+  res.cookie("token", token, {
+    maxAge: 24*60*60*1000,
+    httpOnly: true,
+    sameSite: "strict"
+  })
+
+  res.json({
+    code: "success",
+    message: "Xác thực thành công!"
+  })
+} 
+
 module.exports.resetPassword = async(req,res)=>{
   res.render('admin/pages/reset-password',{
     pageTitle: "Đặt lại mật khẩu"
