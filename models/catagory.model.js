@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const slug = require('mongoose-slug-updater')
 mongoose.plugin(slug)
 
-const schema = mongoose.schema(
+const schema = mongoose.Schema(
   {
     name: String,
     parent: String,
@@ -28,3 +28,11 @@ const schema = mongoose.schema(
     timestamps: true
   }
 )
+
+const category = mongoose.model(
+  "Catagory",
+  schema,
+  "categories"
+)
+
+module.exports = category

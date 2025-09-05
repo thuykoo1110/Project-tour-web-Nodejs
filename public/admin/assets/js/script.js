@@ -1,5 +1,4 @@
-const { pathAdmin } = require("../../../../config/variable.config");
-const { notify } = require("../../../../routes/client/home.route");
+
 
 // Menu Mobile
 const buttonMenuMobile = document.querySelector(".header .inner-button-menu");
@@ -175,7 +174,7 @@ if(categoryCreateForm) {
       formData.append("avatar", avatar);
       formData.append("description", description);
 
-      fetch(`/${pathAdmin}/category/created`,{
+      fetch(`/${pathAdmin}/category/create`,{
         method: "POST",
         body: formData
       })
