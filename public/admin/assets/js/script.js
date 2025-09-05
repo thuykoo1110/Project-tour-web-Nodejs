@@ -1,3 +1,6 @@
+const { pathAdmin } = require("../../../../config/variable.config");
+const { notify } = require("../../../../routes/client/home.route");
+
 // Menu Mobile
 const buttonMenuMobile = document.querySelector(".header .inner-button-menu");
 if(buttonMenuMobile) {
@@ -162,6 +165,31 @@ if(categoryCreateForm) {
       }
       const description = tinymce.get("description").getContent();
       
+
+      //Tạo FormData
+      const formData = new FormData();
+      formData.append("name",name);
+      formData.append("parent",parent);
+      formData.append("position",position);
+      formData.append("status", status);
+      formData.append("avatar", avatar);
+      formData.append("description", description);
+
+      fetch(`/${pathAdmin}/category/created`,{
+        method: "POST",
+        body: formData
+      })
+        .then(res=>res.json())
+        .then(data=>{
+          if(data.code=="error"){
+            notify.error(data.message);
+          }
+          else if(data.code=="success"){
+            drawNotify(data.code,data.message);
+            window.location.reload();
+          }
+        })
+
       console.log(name);
       console.log(parent);
       console.log(position);
