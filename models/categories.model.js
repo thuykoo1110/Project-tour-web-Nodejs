@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const slug = require('mongoose-slug-updater')
+mongoose.plugin(slug)
 
 const schema = mongoose.schema(
   {
@@ -10,7 +12,11 @@ const schema = mongoose.schema(
     description: String,
     createdBy: String,
     updatedBy: String,
-    slug: String, //đường dẫn
+    slug:{
+      type: String,
+      slug: "name",
+      unique: true
+    }, //đường dẫn
     deleted:{
       type: Boolean,
       default: false
