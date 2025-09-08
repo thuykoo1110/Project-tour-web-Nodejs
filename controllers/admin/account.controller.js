@@ -8,7 +8,7 @@ const mailHelper = require('../../helpers/mail.hepler')
 module.exports.login=async (req,res)=>{
   res.render('admin/pages/login',{
     pageTitle: "Đăng nhập"
-  })
+  }) //render trả về cho giao diện, variable trong render sẽ đc dùng file giao diện
 }
 
 module.exports.loginPost = async (req,res) => {

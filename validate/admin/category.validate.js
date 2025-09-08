@@ -8,7 +8,7 @@ module.exports.createPost= async (req,res,next)=>{
           "string.empty": "Vui lòng nhập tên danh mục!"
         }),
     parent: Joi.string().allow(""),
-    positon: Joi.string().allow(""),
+    position: Joi.string().allow(""),
     status: Joi.string().allow(""),
     avatar: Joi.string().allow(""),
     description: Joi.string().allow("")

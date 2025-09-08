@@ -2,6 +2,7 @@ const Category = require('../../models/catagory.model')
 const categoryHelper = require('../../helpers/category.helper.js')
 const accountAdmin = require('../../models/account-admin.model.js')
 const moment = require('moment')
+const { pathAdmin } = require('../../config/variable.config.js')
 
 module.exports.list=async (req,res)=>{
   const categoryList = await Category
@@ -72,4 +73,73 @@ module.exports.createPost=async (req,res)=>{
     code: "success",
     message: "Tạo danh mục thành công!"
   })
+}
+
+module.exports.edit=async (req,res)=>{
+  try{
+  // console.log(req.params) //cho đối tượng dộng (VD id ở router)
+  const { id } = req.params
+
+  const categoryDetail = await Category.findOne({
+    _id: id,
+    deleted: false
+  })
+
+  const categoryList = await Category.find({
+    deleted: false
+  })
+
+  const categoryTree = categoryHelper.buildCategoryTree(categoryList, "");
+  res.render('admin/pages/category-edit',{
+    pageTitle: "Chỉnh sửa danh mục",
+    categoryList: categoryTree,
+    categoryDetail: categoryDetail
+  })
+  }
+  catch(error){
+    res.redirect(`/${pathAdmin}/category/list`)
+  }
+}
+
+module.exports.editPatch = async(req,res) => {
+  try{
+    // console.log(req.params.id);
+    // console.log(req.file);
+    // console.lof(req.body);
+    const id = req.params.id;
+    if(req.body.position){
+    req.body.position = parseInt(req.body.position);
+    }
+    else{
+      const totalRecord = await Category.countDocuments({});
+      req.body.position = totalRecord+1;
+    }
+
+    req.body.updatedBy = req.account.id;
+    if(req.file){
+      req.body.avatar = req.file.path;
+    }
+    else{
+      delete req.body.avatar;
+    }
+    
+    //Model.updateOne( filter,   // điều kiện tìm document cần update
+                      //update,   // dữ liệu update
+                      //options   // (không bắt buộc))
+    await Category.updateOne({
+      _id:id,
+      deleted: false
+    }, req.body);
+
+    res.json({
+        code: "success",
+        message: "Cập nhật danh mục thành công!"
+      })
+  }
+  catch(error){
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!"
+    })
+  }
 }
