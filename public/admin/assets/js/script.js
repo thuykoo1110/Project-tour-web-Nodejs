@@ -750,3 +750,28 @@ if(buttonLogout){
   })
 }
 //End Logout 
+
+// Button Delete
+const listButtonDelete = document.querySelectorAll("[button-delete]");
+if(listButtonDelete.length > 0){
+  listButtonDelete.forEach(button => {
+    button.addEventListener("click", () => {
+      const dataApi = button.getAttribute("data-api"); 
+
+      fetch(dataApi, {
+        method: "PATCH",
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error"){
+            notify.error(data.message);
+          }
+          else if(data.code == "success"){
+            drawNotify(data.code, data.message);
+            window.location.reload();
+          }
+        })
+    })
+  })
+}
+// End Button Delete
