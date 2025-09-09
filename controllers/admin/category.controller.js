@@ -14,6 +14,11 @@ module.exports.list=async (req,res)=>{
   if(req.query.status){
       find.status = req.query.status;
   }
+
+  //Lọc theo người tạo
+  if(req.query.createdBy){
+    find.createdBy = req.query.createdBy;
+  }
   const categoryList = await Category
     .find(find)
     .sort({
@@ -40,9 +45,13 @@ module.exports.list=async (req,res)=>{
     item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY")
     item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY")
   }
+
+  //Danh sách tài khoản quản trị
+  const accountAdminList = await accountAdmin.find({});
   res.render('admin/pages/category-list',{
     pageTitle: "Danh sách danh mục",
-    categoryList: categoryList
+    categoryList: categoryList,
+    accountAdminList: accountAdminList
   })
 }
 
