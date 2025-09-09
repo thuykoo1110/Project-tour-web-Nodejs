@@ -5,10 +5,17 @@ const moment = require('moment')
 const { pathAdmin } = require('../../config/variable.config.js')
 
 module.exports.list=async (req,res)=>{
+  // console.log(req.query); //.query: các biến sau dấu ?
+  const find = {
+    deleted: false,
+    };
+
+  //Lọc theo trạng thái
+  if(req.query.status){
+      find.status = req.query.status;
+  }
   const categoryList = await Category
-    .find({
-    deleted: false
-    })
+    .find(find)
     .sort({
       position: "desc"
     })
@@ -32,7 +39,6 @@ module.exports.list=async (req,res)=>{
     }
     item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY")
     item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY")
-
   }
   res.render('admin/pages/category-list',{
     pageTitle: "Danh sách danh mục",
