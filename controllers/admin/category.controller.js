@@ -3,6 +3,7 @@ const categoryHelper = require('../../helpers/category.helper.js')
 const accountAdmin = require('../../models/account-admin.model.js')
 const moment = require('moment')
 const { pathAdmin } = require('../../config/variable.config.js')
+const slugify = require('slugify')
 
 module.exports.list=async (req,res)=>{
   // console.log(req.query); //.query: các biến sau dấu ?
@@ -35,6 +36,13 @@ module.exports.list=async (req,res)=>{
   }
   // Hết Lọc theo ngày tạo
 
+  // Search
+  if(req.query.keyword){
+    const keyword = slugify(req.query.keyword); //format keyword theo format slug
+    const keywordRegex = new RegExp(keyword, "i"); //regex
+    find.slug = keywordRegex;
+  }
+  // End Search
   const categoryList = await Category
   .find(find)
   .sort({
@@ -229,7 +237,7 @@ module.exports.changeMultiPatch = async (req,res) =>{
           deletedBy: req.account.id,
           deletedAt: Date.now()
         });
-        res.json({
+        res.json({ 
           code: "success",
           message: "Đã xóa thành công!"
         })
