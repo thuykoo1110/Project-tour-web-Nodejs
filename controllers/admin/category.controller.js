@@ -19,11 +19,27 @@ module.exports.list=async (req,res)=>{
   if(req.query.createdBy){
     find.createdBy = req.query.createdBy;
   }
+  
+  // Lọc theo ngày tạo
+  const dataFilter = {};
+  if(req.query.startDate){
+    const startDate = moment(req.query.startDate).toDate();  //format theo thời gian trong database
+    dataFilter.$gte = startDate; //lọc thời gian >=startDate
+  }
+  if(req.query.endDate){
+    const endDate = moment(req.query.endDate).toDate();
+    dataFilter.$lte = endDate;
+  }
+  if(Object.keys(dataFilter).length>0){  //check object có chứa phần tử ko rùi mới add vào find
+    find.createdAt = dataFilter;
+  }
+  // Hết Lọc theo ngày tạo
+
   const categoryList = await Category
-    .find(find)
-    .sort({
-      position: "desc"
-    })
+  .find(find)
+  .sort({
+    position: "desc"
+  })
   
   for(const item of categoryList){
     if(item.createdBy){
