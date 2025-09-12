@@ -43,6 +43,8 @@ module.exports.list=async (req,res)=>{
     find.slug = keywordRegex;
   }
   // End Search
+
+  // Phân trang
   const limitItems = 4;
   let page;
   if(req.query.page&&parseInt(req.query.page)>0){
@@ -57,8 +59,6 @@ module.exports.list=async (req,res)=>{
     totalRecord: totalRecord,
     totalPage: totalPage
   }
-  // Phân trang
-
   // End phân trang
   const categoryList = await Category
   .find(find)

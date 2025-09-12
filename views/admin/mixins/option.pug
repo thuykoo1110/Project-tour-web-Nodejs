@@ -1,6 +1,6 @@
 mixin options(list, level = 0, currentId="")
   each item in list   
-    - const prefix = "--".repeat(level) //- :variable
+    -const prefix = "--".repeat(level) //- :variable
     option(
       value = item.id
       selected = (item.id==currentId?true:false)
