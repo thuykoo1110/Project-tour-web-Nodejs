@@ -322,8 +322,8 @@ module.exports.changeMultiPatch = async (req,res) =>{
           message: "Cập nhật thành công!"
         })
         break;
-      case "deleted":
-        await Category.updateMany({
+      case "delete":
+        await Tour.updateMany({
           _id: { $in: ids } //update nhìu item dùng updateMany
         },{
           deleted: true,
@@ -384,6 +384,72 @@ module.exports.destroyDelete = async (req,res) => {
       code: "success",
       message: "Đã xóa vĩnh viễn!"
     })
+  }catch(error){
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!"
+    })
+  }
+}
+
+
+module.exports.changeMultiPatch = async (req,res) =>{
+  try{
+    const { option, ids } = req.body;
+
+    switch(option){
+      case "active":
+      case "inactive":
+        await Tour.updateMany({
+          _id: { $in: ids}
+        },{
+          status: option
+        });
+        res.json({
+          code: "success",
+          message: "Cập nhật thành công!"
+        })
+        break;
+      case "undo":
+        await Tour.updateMany({
+          _id: { $in: ids } //update nhìu item dùng updateMany
+        },{
+          deleted: false
+        });
+        res.json({
+          code: "success",
+          message: "Đã khôi phục thành công!"
+        })
+        break;
+      case "delete":
+        await Tour.updateMany({
+          _id: { $in: ids } //update nhìu item dùng updateMany
+        },{
+          deleted: true,
+          deletedBy: req.account.id,
+          deletedAt: Date.now()
+        });
+        res.json({
+          code: "success",
+          message: "Đã xóa thành công!"
+        })
+        break;
+      case "destroy":
+        await Tour.deleteMany({
+          _id: { $in: ids } //update nhìu item dùng updateMany
+        });
+        res.json({
+          code: "success",
+          message: "Đã xóa vĩnh viễn thành công!"
+        })
+        break;
+      default: 
+        res.json({
+          code: "error",
+          message: "Hành động không hợp lệ!"
+        })
+        break;
+    }
   }catch(error){
     res.json({
       code: "error",

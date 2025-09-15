@@ -99,8 +99,12 @@ block main
 
   //- Section 7
   .section-7
-    span(class="inner-label") Hiển thị #{pagination.skip + 1} - #{pagination.skip + categoryList.length} của #{pagination.totalRecord}
+    span.inner-label
+      - if (pagination.totalRecord > 0 && categoryList && categoryList.length > 0)
+        | Hiển thị #{(pagination.skip || 0) + 1} - #{(pagination.skip || 0) + categoryList.length} của #{pagination.totalRecord}
+      - else
+        | Hiển thị 0 - 0 của 0
     select(class="inner-pagination" box-pagination)
       - for(let i=1; i <= pagination.totalPage; i++)
-          option(value=i) Trang #{i}
+        option(value=i) Trang #{i}
   //- End Section 7

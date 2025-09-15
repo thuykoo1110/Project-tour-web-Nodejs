@@ -1047,18 +1047,40 @@ if(changeMulti){
         ids: ids
       }
 
-      fetch(api, {
+      const fetchApiChangeMulti = () => {
+        fetch(api, {
         method: "PATCH",
         headers:{
           "Content-Type" : "application/json"
         },
         body: JSON.stringify(dataFinal)
-      })
+        })
         .then(res => res.json())
         .then(data => {
           drawNotify(data.code, data.message);
           window.location.reload();
         })
+      }
+      if(option == "destroy"){
+        Swal.fire({
+        title: "Bạn có chắc muốn xóa?",
+        text: "Hành động này của bạn sẽ không thể khôi phục lại!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Vẫn xóa", 
+        cancelButtonText: "Không xóa"
+        }).then((result) => {
+        if (result.isConfirmed) {
+          fetchApiChangeMulti();
+          }
+        });
+      }
+      else {
+        fetchApiChangeMulti();
+      }
+      
     }
   })
 }

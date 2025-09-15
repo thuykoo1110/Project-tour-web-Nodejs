@@ -4,6 +4,7 @@ const cloudinaryHelper = require('../../helpers/cloudinary.helper')
 const multer =  require('multer')
 const upload = multer({ storage: cloudinaryHelper.storage })
 const tourValidate = require('../../validate/admin/tour.validate')
+const tour = require('../../models/tour.model')
 
 router.get('/list',tourController.list)
 
