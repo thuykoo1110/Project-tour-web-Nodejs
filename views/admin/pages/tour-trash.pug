@@ -71,14 +71,21 @@ block main
                     button-undo 
                     data-api=`/${pathAdmin}/tour/undo/${item.id}`
                     ) <i class="fa-solid fa-rotate-left"></i>
-                  button(class="inner-delete") <i class="fa-regular fa-trash-can"></i>
+                  button(
+                    class="inner-delete"
+                    button-destroy
+                    data-api=`/${pathAdmin}/tour/destroy/${item.id}`
+                    ) <i class="fa-regular fa-trash-can"></i>
   //- End Section 6
 
   //- Section 7
   .section-7
     span.inner-label
-    | Hiển thị #{(pagination.skip || 0) + 1} - #{(pagination.skip || 0) + ((tourList && tourList.length) || 0)} của #{pagination.totalRecord || 0}
+      - if (pagination.totalRecord > 0 && tourList && tourList.length > 0)
+        | Hiển thị #{(pagination.skip || 0) + 1} - #{(pagination.skip || 0) + tourList.length} của #{pagination.totalRecord}
+      - else
+        | Hiển thị 0 - 0 của 0
     select(class="inner-pagination" box-pagination)
       - for(let i=1; i <= pagination.totalPage; i++)
-          option(value=i) Trang #{i}
+        option(value=i) Trang #{i}
   //- End Section 7

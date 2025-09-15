@@ -22,6 +22,8 @@ router.patch(
 
 router.patch('/delete/:id', tourController.deletePatch)
 
+router.delete('/destroy/:id', tourController.destroyDelete)
+
 router.patch('/undo/:id', tourController.undoPatch)
 
 router.patch('/change-multi', tourController.changeMultiPatch)
