@@ -9,19 +9,19 @@ block main
       .inner-item.inner-label
         <i class="fa-solid fa-filter"></i> Bộ lọc
       .inner-item
-        select
+        select(filter-status)
           option(value="") Trạng thái
-          option(value="") Hoạt động
-          option(value="") Tạm dừng
+          option(value="active") Hoạt động
+          option(value="inactive") Tạm dừng
       .inner-item
-        select
+        select(filter-created-by)
           option(value="") Người tạo
-          option(value="") Lê Văn A
-          option(value="") Lê Văn B
+          each item in accountAdminList   
+            option(value=item.id) #{item.fullName}
       .inner-item.inner-date
-        input(type="date")
+        input(type="date" filter-start-date)
         span -
-        input(type="date")
+        input(type="date" filter-end-date)
       .inner-item
         select
           option(value="") Danh mục
@@ -34,25 +34,28 @@ block main
           option(value="") 2tr đến 4tr
           option(value="") 4tr đến 8tr
           option(value="") Trên 8tr
-      .inner-item.inner-reset
+      .inner-item.inner-reset(filter-reset)
         <i class="fa-solid fa-rotate-left"></i> Xóa bộ lọc
   //- End Section 4
 
   //- Section 5
   .section-5
     .inner-wrap
-      .inner-change-status
+      .inner-change-status(
+        change-multi 
+        data-api=`/${pathAdmin}/tour/change-multi`
+      )
         .inner-item
           select
             option(value="") -- Hành động --
-            option(value="") Hoạt động
-            option(value="") Dừng hoạt động
-            option(value="") Xóa
+            option(value="active") Hoạt động
+            option(value="inactive") Dừng hoạt động
+            option(value="delete") Xóa
         .inner-item
           button Áp dụng
       .inner-search
         <i class="fa-solid fa-magnifying-glass"></i>
-        input(type="text" placeholder="Tìm kiếm")
+        input(type="text" placeholder="Tìm kiếm" search)
       .inner-button-create
         a(href=`/${pathAdmin}/tour/create`) + Tạo mới
       .inner-button-trash

@@ -955,7 +955,7 @@ if(filterCreatedBy){
 // End Filter Created By
 
 // Filter Start Date
-const filterStartDate = document.querySelector("[filter-start-date");
+const filterStartDate = document.querySelector("[filter-start-date]");
 if(filterStartDate){
   const url = new URL(window.location.href);
   filterStartDate.addEventListener("change", () => {
@@ -1013,7 +1013,7 @@ if(filterReset){
 // End Filter Reset
 
 // Check All
-const checkAll = document.querySelector("[check-all");
+const checkAll = document.querySelector("[check-all]");
 if(checkAll){
   checkAll.addEventListener("click", () => {
     const listCheckItem = document.querySelectorAll("[check-item]");
@@ -1025,7 +1025,7 @@ if(checkAll){
 // End Check All
 
 // Change Multi
-const changeMulti= document.querySelector("[change-multi");
+const changeMulti= document.querySelector("[change-multi]");
 if(changeMulti){
   const api = changeMulti.getAttribute("data-api");
   const select = changeMulti.querySelector("select");

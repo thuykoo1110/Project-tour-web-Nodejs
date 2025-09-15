@@ -21,5 +21,8 @@ router.patch(
 )
 
 router.patch('/delete/:id', tourController.deletePatch)
+
+router.patch('/change-multi', tourController.changeMultiPatch)
+
 router.get('/trash',tourController.trash)
 module.exports=router;

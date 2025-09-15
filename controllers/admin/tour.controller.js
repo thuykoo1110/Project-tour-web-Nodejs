@@ -6,12 +6,41 @@ const accountAdmin = require('../../models/account-admin.model.js')
 const moment = require('moment')
 const { pathAdmin } = require('../../config/variable.config.js')
 const city = require('../../models/city.model')
+const slugify = require('slugify')
 
 module.exports.list = async (req,res)=>{
   const find ={
     deleted: false
   };
 
+  if(req.query.status){
+    find.status = req.query.status
+  }
+
+   //Lọc theo người tạo
+  if(req.query.createdBy){
+    find.createdBy = req.query.createdBy;
+  }
+
+  const dataFilter = {}
+  if(req.query.startDate){
+    const startDate = moment(req.query.startDate).toDate();
+    dataFilter.$gte = startDate;
+  }
+  if(req.query.endDate){
+    const endDate = moment(req.query.endDate).toDate();
+    dataFilter.$lte = endDate;
+  }
+  if(Object.keys(dataFilter).length>0){
+    find.createdAt = dataFilter
+  }
+  // Search
+  if(req.query.keyword){
+    const keyword = slugify(req.query.keyword); //format keyword theo format slug
+    const keywordRegex = new RegExp(keyword, "i"); //regex
+    find.slug = keywordRegex;
+  }
+  // End Search
   const tourList = await Tour
     .find(find)
     .sort({
@@ -99,8 +128,37 @@ module.exports.createPost = async (req,res)=>{
 }
 
 module.exports.trash = async (req,res)=>{
+  const find = {
+    deleted: true
+  }
+
+  const tourList = await Tour.find(find).sort({
+    position: "desc"
+  })
+
+  for(const item of tourList){
+    if(item.createdBy){
+      const infoAccount = await accountAdmin.findOne({
+        _id: item.createdBy
+      })
+      if(infoAccount){
+        item.createdByFullName = infoAccount.fullName
+      }
+    }
+    if(item.deletedBy){
+      const infoAccount = await accountAdmin.findOne({
+        _id: item.deletedBy
+      })
+      if(infoAccount){
+        item.deletedByFullName = infoAccount.fullName
+      }
+    }
+    item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY")
+    item.deletedAtFormat = moment(item.deletedAt).format("HH:mm - DD/MM/YYYY")
+  }
   res.render('admin/pages/tour-trash',{
-    pageTitle: "Thùng rác"
+    pageTitle: "Thùng rác",
+    tourList: tourList
   })
 }
 
@@ -200,6 +258,51 @@ module.exports.deletePatch = async (req,res) => {
       code: "success",
       message: "Xóa tour thành công!"
     })
+  }catch(error){
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!"
+    })
+  }
+}
+
+module.exports.changeMultiPatch = async (req,res) =>{
+  try{
+    const { option, ids } = req.body;
+
+    switch(option){
+      case "active":
+      case "inactive":
+        await Tour.updateMany({
+          _id: { $in: ids}
+        },{
+          status: option
+        });
+        res.json({
+          code: "success",
+          message: "Cập nhật thành công!"
+        })
+        break;
+      case "deleted":
+        await Category.updateMany({
+          _id: { $in: ids } //update nhìu item dùng updateMany
+        },{
+          deleted: true,
+          deletedBy: req.account.id,
+          deletedAt: Date.now()
+        });
+        res.json({
+          code: "success",
+          message: "Đã xóa thành công!"
+        })
+        break;
+      default: 
+        res.json({
+          code: "error",
+          message: "Hành động không hợp lệ!"
+        })
+        break;
+    }
   }catch(error){
     res.json({
       code: "error",
