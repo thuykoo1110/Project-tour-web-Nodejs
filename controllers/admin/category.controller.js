@@ -46,18 +46,15 @@ module.exports.list=async (req,res)=>{
 
   // Phân trang
   const limitItems = 4;
-  let page;
-  if(req.query.page&&parseInt(req.query.page)>0){
-    page = req.query.page;
-  }
+  const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
 
   const skip = (page-1)*limitItems;
   const totalRecord = await Category.countDocuments(find);
   const totalPage = Math.ceil(totalRecord/limitItems);
   const pagination = {
-    skip: skip,
-    totalRecord: totalRecord,
-    totalPage: totalPage
+    skip: skip || 0,
+    totalRecord: totalRecord || 0,
+    totalPage: totalPage || 1
   }
   // End phân trang
   const categoryList = await Category

@@ -41,11 +41,30 @@ module.exports.list = async (req,res)=>{
     find.slug = keywordRegex;
   }
   // End Search
+
+  const limitItems = 4;
+  let page;
+  if(req.query.page&&parseInt(req.query.page)>0){
+    page = req.query.page;
+  }
+
+  const skip = (page-1)*limitItems;
+  const totalRecord = await Category.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord/limitItems);
+  const pagination = {
+    skip: skip,
+    totalRecord: totalRecord,
+    totalPage: totalPage
+  }
+  // Phân trang
+
   const tourList = await Tour
     .find(find)
     .sort({
       position: "desc"
-    });
+    })
+    .skip(skip)
+    .limit(limitItems)
 
     for(const item of tourList){
       if(item.createdBy){
@@ -72,7 +91,8 @@ module.exports.list = async (req,res)=>{
   res.render('admin/pages/tour-list',{
     pageTitle: "Danh sách tour",
     tourList: tourList,
-    accountAdminList:accountAdminList
+    accountAdminList:accountAdminList,
+    pagination: pagination
   })
 }
 
@@ -132,9 +152,27 @@ module.exports.trash = async (req,res)=>{
     deleted: true
   }
 
-  const tourList = await Tour.find(find).sort({
-    position: "desc"
-  })
+  const limitItems = 4;
+  const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
+
+  const skip = (page - 1) * limitItems;
+  const totalRecord = await Tour.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord / limitItems);
+
+  const pagination = {
+    skip,
+    totalRecord,
+    totalPage
+  };
+  // Phân trang
+
+    const tourList = await Tour
+      .find(find)
+      .sort({
+      position: "desc"
+      })
+      .limit(limitItems)
+      .skip(skip)
 
   for(const item of tourList){
     if(item.createdBy){
@@ -158,7 +196,8 @@ module.exports.trash = async (req,res)=>{
   }
   res.render('admin/pages/tour-trash',{
     pageTitle: "Thùng rác",
-    tourList: tourList
+    tourList: tourList,
+    pagination: pagination
   })
 }
 

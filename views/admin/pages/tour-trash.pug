@@ -76,9 +76,9 @@ block main
 
   //- Section 7
   .section-7
-    span(class="inner-label") Hiển thị 1 - 9 của 78
-    select(class="inner-pagination")
-      option Trang 1
-      option Trang 2
-      option Trang 3
+    span.inner-label
+    | Hiển thị #{(pagination.skip || 0) + 1} - #{(pagination.skip || 0) + ((tourList && tourList.length) || 0)} của #{pagination.totalRecord || 0}
+    select(class="inner-pagination" box-pagination)
+      - for(let i=1; i <= pagination.totalPage; i++)
+          option(value=i) Trang #{i}
   //- End Section 7
