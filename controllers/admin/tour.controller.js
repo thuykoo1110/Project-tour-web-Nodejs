@@ -183,3 +183,27 @@ module.exports.editPatch = async (req, res) => {
     })
   }
 }
+
+module.exports.deletePatch = async (req,res) => {
+  try{
+    const id = req.params.id;
+
+    await Tour.updateOne({
+      _id: id
+    },{
+      deleted: true,
+      deletedBy: req.account.id,
+      deletedAt: Date.now()
+    });
+
+    res.json({
+      code: "success",
+      message: "Xóa tour thành công!"
+    })
+  }catch(error){
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!"
+    })
+  }
+}
