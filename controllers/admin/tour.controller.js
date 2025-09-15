@@ -2,9 +2,46 @@ const Category = require('../../models/catagory.model')
 const categoryHelper = require('../../helpers/category.helper.js')
 const City = require('../../models/city.model')
 const Tour = require('../../models/tour.model')
+const accountAdmin = require('../../models/account-admin.model.js')
+const moment = require('moment')
+
 module.exports.list = async (req,res)=>{
+  const find ={
+    deleted: false
+  };
+
+  const tourList = await Tour
+    .find(find)
+    .sort({
+      position: "desc"
+    });
+
+    for(const item of tourList){
+      if(item.createdBy){
+        const infoAccount = await accountAdmin.findOne({
+          _id: item.createdBy
+        })
+        if(infoAccount){
+          item.createdByFullName = infoAccount.fullName
+        }
+      }
+      if(item.updatedBy){
+        const infoAccount = await accountAdmin.findOne({
+          _id: item.createdBy
+        })
+        if(infoAccount){
+          item.updatedByFullName = infoAccount.fullName
+        }
+      }
+      item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
+      item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY");
+    }
+
+    const accountAdminList = await accountAdmin.find({});
   res.render('admin/pages/tour-list',{
-    pageTitle: "Danh sách tour"
+    pageTitle: "Danh sách tour",
+    tourList: tourList,
+    accountAdminList:accountAdminList
   })
 }
 
