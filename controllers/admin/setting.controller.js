@@ -1,4 +1,6 @@
 const SettingwebsiteInfo = require("../../models/setting-website-info.model")
+const { permissionList } = require("../../config/variable.config")
+const Role = require('../../models/roles.model')
 
 module.exports.list=async(req,res)=>{
   res.render('admin/pages/setting-list',{
@@ -63,6 +65,26 @@ module.exports.roleList=async(req,res)=>{
 
 module.exports.roleCreate=async(req,res)=>{
   res.render('admin/pages/setting-role-create',{
-    pageTitle: "Tạo nhóm quyền"
+    pageTitle: "Tạo nhóm quyền",
+    permissionList: permissionList
   })
+}
+
+module.exports.roleCreatePost=async(req,res)=>{
+  try{
+    req.body.createdBy = req.account.id;
+    req.body.updatedBy = req.account.id;
+
+    const newRecord = new Role(req.body);
+    await newRecord.save();
+    res.json({
+      code: "success",
+      message: "Tạo nhóm quyền thành công!"
+    })
+  } catch(error){
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!"
+    })
+  }
 }
