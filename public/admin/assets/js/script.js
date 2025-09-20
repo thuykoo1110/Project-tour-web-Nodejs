@@ -1,5 +1,4 @@
 
-
 // Menu Mobile
 const buttonMenuMobile = document.querySelector(".header .inner-button-menu");
 if(buttonMenuMobile) {
@@ -1093,7 +1092,8 @@ if(changeMulti){
         option: option,
         ids: ids
       }
-
+      console.log("OPTION:", option);
+console.log("IDS gửi lên:", ids);
       const fetchApiChangeMulti = () => {
         fetch(api, {
         method: "PATCH",
@@ -1150,12 +1150,11 @@ if(search){
 
       window.location.href = url.href;
     }
-
-    const valueCurrent = url.searchParams.get("keyword");
-    if(valueCurrent){
-      search.value = valueCurrent;
-    }
   })
+  const valueCurrent = url.searchParams.get("keyword");
+  if(valueCurrent){
+    search.value = valueCurrent;
+  }
 }
 // End Search
 

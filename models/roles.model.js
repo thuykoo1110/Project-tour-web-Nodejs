@@ -6,6 +6,11 @@ const schema = mongoose.Schema({
   permissions: Array,
   createdBy: String,
   updatedBy: String,
+  slug:{
+      type: String,
+      slug: "name",
+      unique: true
+    }, //đường dẫn
   deleted: {
     type: Boolean,
     default: false
