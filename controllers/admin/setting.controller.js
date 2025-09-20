@@ -1,5 +1,5 @@
 const SettingwebsiteInfo = require("../../models/setting-website-info.model")
-const { permissionList } = require("../../config/variable.config")
+const { permissionList, pathAdmin } = require("../../config/variable.config")
 const Role = require('../../models/roles.model')
 const slugify = require('slugify')
 module.exports.list=async(req,res)=>{
@@ -156,6 +156,65 @@ module.exports.deleteRolePatch = async(req,res)=>{
     res.json({
       code: "error",
       message: "Bản ghi không hợp lệ!"
+    })
+  }
+}
+
+module.exports.roleEdit = async(req,res) => {
+  try{
+    const id =req.params.id;
+
+    const roleDetail = await Role.findOne({
+      _id: id,
+      deleted: false
+    });
+
+    if(!roleDetail){
+      res.redirect(`/${pathAdmin}/setting/role/list`);
+      return;
+    }
+    res.render('admin/pages/setting-role-edit',{
+      pageTitle: "Chỉnh sửa nhóm quyền",
+      permissionList: permissionList,
+      roleDetail: roleDetail
+    })
+  }catch(error){
+    res.redirect(`/${pathAdmin}/setting/role/list`);
+  }
+}
+
+
+module.exports.roleEditPatch = async(req,res) => {
+  try{
+    const id =req.params.id;
+
+    const roleDetail = await Role.findOne({
+      _id: id,
+      deleted: false
+    });
+
+    if(!roleDetail){
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!"
+      });
+      return;
+    }
+    
+    req.body.updatedBy = req.account.id;
+    await Role.updateOne({
+      _id: id,
+      deleted: false
+    }, req.body);
+
+    res.json({
+      code: "success",
+      message: "Cập nhật nhóm quyền thành công!"
+    })
+  }catch(error){
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!"
     })
   }
 }

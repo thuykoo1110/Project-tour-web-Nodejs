@@ -775,6 +775,64 @@ if(settingRoleCreateForm) {
 }
 // End Setting Role Create Form
 
+
+// Setting Role Edit Form
+const settingRoleEditForm = document.querySelector("#setting-role-edit-form");
+if(settingRoleEditForm) {
+  const validation = new JustValidate('#setting-role-edit-form');
+
+  validation
+    .addField('#name', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập tên nhóm quyền!'
+      },
+    ])
+    .onSuccess((event) => {
+      const id = event.target.id.value;
+      const name = event.target.name.value;
+      const description = event.target.description.value;
+      const permissions = [];
+
+      // permissions
+      const listElementPermission = settingRoleEditForm.querySelectorAll('input[name="permissions"]:checked');
+      listElementPermission.forEach(input => {
+        permissions.push(input.value);
+      });
+      // End permissions
+
+      // console.log(name);
+      // console.log(description);
+      // console.log(permissions);
+
+      const dataFinal = {
+        name: name,
+        description: description,
+        permissions: permissions
+      };
+
+      fetch(`/${pathAdmin}/setting/role/edit/${id}`,{
+        method: "PATCH",
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dataFinal)
+      })
+        .then(res=>res.json())
+        .then(data => {
+          console.log("RESPONSE DATA:", data);
+          if(data.code == "error"){
+            notify.error(data.message)
+          }
+          else if(data.code == "success"){
+            notify.success(data.message)
+          }
+        })
+    })
+  ;
+}
+// End Setting Role Edit Form
+
 // Profile Edit Form
 const profileEditForm = document.querySelector("#profile-edit-form");
 if(profileEditForm) {
@@ -1108,7 +1166,7 @@ console.log("IDS gửi lên:", ids);
           window.location.reload();
         })
       }
-      if(option == "destroy"){
+      if(option == "destroy"){ 
         Swal.fire({
         title: "Bạn có chắc muốn xóa?",
         text: "Hành động này của bạn sẽ không thể khôi phục lại!",
