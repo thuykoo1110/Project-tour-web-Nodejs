@@ -1166,8 +1166,6 @@ if(changeMulti){
         option: option,
         ids: ids
       }
-      console.log("OPTION:", option);
-console.log("IDS gửi lên:", ids);
       const fetchApiChangeMulti = () => {
         fetch(api, {
         method: "PATCH",

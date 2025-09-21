@@ -4,6 +4,7 @@ const Role = require('../../models/roles.model')
 const slugify = require('slugify')
 const accountAdmin = require('../../models/account-admin.model')
 const bcrypt=require("bcryptjs")
+const moment = require('moment')
 
 module.exports.list=async(req,res)=>{
   res.render('admin/pages/setting-list',{
@@ -49,14 +50,74 @@ module.exports.websiteInfoPatch = async( req, res ) => {
 }
 
 module.exports.accountAdminList=async(req,res)=>{
+  const find = {
+    deleted: false
+  }
+
+  if(req.query.status){
+    find.status = req.query.status
+  }
+
+  const dataFilter={};
+  if(req.query.startDate){
+    const startDate = moment(req.query.startDate).toDate();
+    dataFilter.$gte = startDate;
+  }
+  if(req.query.endDate){
+    const endDate = moment(req.query.endDate).toDate();
+    dataFilter.$lte = endDate;
+  }
+  if(Object.keys(dataFilter).length>0){
+    find.createdAt=dataFilter;
+  }
+
+  if(req.query.keyword){
+    const keyword = slugify(req.query.keyword);
+    const keywordRegex = new RegExp(keyword, "i");
+    find.slug = keywordRegex;
+  }
+
+  // Phân trang
+  const limitItems = 4;
+  const page = parseInt(req.query.page) > 0? parseInt(req.query.page) : 1;
+
+  const skip = (page-1)*limitItems;
+  const totalRecord = await accountAdmin.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord/limitItems);
+  const pagination = {
+    skip: skip || 0,
+    totalRecord: totalRecord || 0,
+    totalPage: totalPage
+  }
+  const accountAdminList = await accountAdmin
+    .find(find)
+    .sort({
+      createdAt: "desc"
+    })
+    .limit(limitItems)
+    .skip(skip)
+
+  for(const item of accountAdminList){
+    if(item.role){
+      const roleInfo = await Role.findOne({
+        _id: item.role
+      });
+      if(roleInfo){
+        item.roleName = roleInfo.name;
+      }
+    }
+  }
+
   res.render('admin/pages/setting-account-admin-list',{
-    pageTitle: "Tài khoản quản trị"
+    pageTitle: "Tài khoản quản trị",
+    accountAdminList: accountAdminList,
+    pagination: pagination
   })
 }
 
 module.exports.accountAdminCreate=async(req,res)=>{
   const roleList =  await Role.find({
-    deletedd: false
+    deleted: false
   })
   res.render('admin/pages/setting-account-admin-create',{
     pageTitle: "Tạo tài khoản quản trị",
@@ -64,6 +125,28 @@ module.exports.accountAdminCreate=async(req,res)=>{
   })
 }
 
+module.exports.deleteAccountAdminPatch = async (req,res) => {
+  try{
+    const id = req.params.id;
+    await accountAdmin.updateOne({
+      _id:id
+    },{
+      deleted: true,
+      deletedAt: Date.now(),
+      deletedBy: req.account.id
+    });
+
+    res.json({
+        code: "success",
+        message: "Xóa danh mục thành công!"
+      })
+  }catch(error){
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!"
+    })
+  }
+}
 module.exports.accountAdminCreatePost = async(req,res) =>{
   try{
     const existAccount = await accountAdmin.findOne({
@@ -257,6 +340,51 @@ module.exports.roleEditPatch = async(req,res) => {
     res.json({
       code: "error",
       message: "Dữ liệu không hợp lệ!"
+    })
+  }
+}
+
+module.exports.accountAdminChangeMulti = async(req,res) => {
+  try{
+    const { option, ids } = req.body;
+    switch(option){
+      case "active":
+      case "inactive":
+      case "initial":
+        await accountAdmin.updateMany({
+          _id: { $in: ids}
+        },{
+          status: option
+        });
+        res.json({
+          code: "success",
+          message: "Cập nhật trạng thái thành công!"
+        })
+        break;
+      case "delete":
+        await Category.updateMany({
+          _id: { $in: ids } //update nhìu item dùng updateMany
+        },{
+          deleted: true,
+          deletedBy: req.account.id,
+          deletedAt: Date.now()
+        });
+        res.json({ 
+          code: "success",
+          message: "Đã xóa thành công!"
+        })
+        break;
+      default: 
+        res.json({
+          code: "error",
+          message: "Hành động không hợp lệ!"
+        });
+        break;
+    }
+  }catch(error){
+    res.json({
+      code: "error",
+      message: "Bản ghi không hợp lệ!"
     })
   }
 }

@@ -22,11 +22,15 @@ router.get('/account-admin/list',settingController.accountAdminList);
 
 router.get('/account-admin/create',settingController.accountAdminCreate);
 
+router.patch('/account-admin/change-multi',settingController.accountAdminChangeMulti);
+
 router.post(
   '/account-admin/create',
   upload.single("avatar"),
   settingController.accountAdminCreatePost
 );
+
+router.patch('/account-admin/delete/:id', settingController.deleteAccountAdminPatch);
 
 router.get('/role/list',settingController.roleList);
 

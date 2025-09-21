@@ -9,8 +9,14 @@ const schema = new mongoose.Schema({
   positionCompany: String,
   createdBy: String,
   updatedBy: String,
+  avatar: String,
   password: String,
   status: String, //initial, active, inactive
+  slug:{
+    type: String,
+    slug: "name",
+    unique: true
+  }, //đường dẫn
   deleted:{
     type: Boolean,
     default: false

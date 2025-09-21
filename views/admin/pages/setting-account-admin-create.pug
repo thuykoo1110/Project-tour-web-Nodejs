@@ -17,9 +17,8 @@ block main
       .inner-group
         label(class="inner-label" for="role") Nhóm quyền
         select(id="role" name="role")
-          option(value="") Quản trị viên
-          option(value="") Quản lý tour
-          option(value="") Quản lý đơn hàng
+          each item in roleList
+            option(value=item.id) #{item.name}
       .inner-group
         label(class="inner-label" for="positionCompany") Chức vụ
         input(type="text" id="positionCompany" name="positionCompany")

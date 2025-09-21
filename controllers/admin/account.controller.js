@@ -4,6 +4,7 @@ const jwt=require("jsonwebtoken")
 const generateHelper= require('../../helpers/generate.helper')
 const forgotPassword = require('../../models/forgot-password.model')
 const mailHelper = require('../../helpers/mail.hepler')
+const { default: slugify } = require("slugify")
 
 module.exports.login=async (req,res)=>{
   res.render('admin/pages/login',{
@@ -85,6 +86,11 @@ module.exports.registerPost = async (req,res)=>{
   }
 
   req.body.status="initial";
+  
+  if(req.body.fullName){
+    req.body.slug = slugify(req.body.fullName);
+    
+  }
 
   //Mã hóa mât khẩu
   const salt = await bcrypt.genSaltSync(10);
