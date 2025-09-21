@@ -33,6 +33,7 @@ module.exports.verifyToken = async (req,res,next) => {
   next();
 }
   catch(error){
+    console.error("Token error:", error);
     res.clearCookie("token");
     res.redirect(`/${pathAdmin}/account/login`);
   }

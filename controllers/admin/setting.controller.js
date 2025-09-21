@@ -2,6 +2,9 @@ const SettingwebsiteInfo = require("../../models/setting-website-info.model")
 const { permissionList, pathAdmin } = require("../../config/variable.config")
 const Role = require('../../models/roles.model')
 const slugify = require('slugify')
+const accountAdmin = require('../../models/account-admin.model')
+const bcrypt=require("bcryptjs")
+
 module.exports.list=async(req,res)=>{
   res.render('admin/pages/setting-list',{
     pageTitle: "Danh sách cài đặt"
@@ -52,11 +55,50 @@ module.exports.accountAdminList=async(req,res)=>{
 }
 
 module.exports.accountAdminCreate=async(req,res)=>{
+  const roleList =  await Role.find({
+    deletedd: false
+  })
   res.render('admin/pages/setting-account-admin-create',{
-    pageTitle: "Tạo tài khoản quản trị"
+    pageTitle: "Tạo tài khoản quản trị",
+    roleList: roleList
   })
 }
 
+module.exports.accountAdminCreatePost = async(req,res) =>{
+  try{
+    const existAccount = await accountAdmin.findOne({
+      email: req.body.email
+    });
+
+    if(existAccount){
+      res.json({
+        code: "error",
+        message: "Email đã tồn tại trong hệ thống!"
+      })
+      return;
+    }
+    req.body.createdBy = req.account.id;
+    req.body.updatedBy = req.account.id;
+    req.body.avatar = (req.file)? req.file.path:"";
+
+    //Mã hóa mât khẩu
+    const salt = await bcrypt.genSaltSync(10);
+    req.body.password = await bcrypt.hashSync(req.body.password, salt);
+
+    const newAccount = new accountAdmin(req.body); //ghi data vào database
+    await newAccount.save();  //await: để đơi lưu dữ liệu xong mới chạy xún bên dứi
+
+    res.json({
+      code: "success",
+      message: "Tạo tài khoản thành công!"
+    })
+  }catch(error){
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!"
+    })
+  }
+}
 module.exports.roleList=async(req,res)=>{
   const find = {
     deleted: false

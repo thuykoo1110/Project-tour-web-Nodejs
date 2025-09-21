@@ -26,8 +26,9 @@ block main
       .inner-group
         label(class="inner-label" for="status") Trạng thái
         select(id="status" name="status")
-          option(value="") Hoạt động
-          option(value="") Dừng hoạt động
+          option(value="initial") Khởi tạo
+          option(value="active") Hoạt động
+          option(value="inactive") Dừng hoạt động
       .inner-group
         label(class="inner-label" for="password") Mật khẩu
         input(type="text" id="password" name="password")

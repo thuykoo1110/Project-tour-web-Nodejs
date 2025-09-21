@@ -54,7 +54,7 @@ module.exports.loginPost = async (req,res) => {
 
   // console.log(token);
   res.cookie("token",token,{
-    maxAge: rememberPassword? (7*24*60*60*1000):(24*60*60*1000), //1 day
+    maxAge: rememberPassword ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000, //1 day
     httpOnly: true,
     sameSite: "strict"
   })
