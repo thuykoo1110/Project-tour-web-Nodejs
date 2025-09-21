@@ -182,6 +182,96 @@ module.exports.accountAdminCreatePost = async(req,res) =>{
     })
   }
 }
+
+module.exports.accountAdminEdit=async(req,res)=>{
+  try{
+    const id = req.params.id;
+
+    const  accountDetail = await accountAdmin.findOne({
+      _id: id,
+      deleted: false
+    })
+
+    if(!accountDetail){
+      res.redirect(`/${pathAdmin}/setting/account-admin/list`);
+      return;
+    }
+
+    const roleList =  await Role.find({
+      deleted: false
+    })
+    res.render('admin/pages/setting-account-admin-edit',{
+      pageTitle: "Chỉnh sửa tài khoản quản trị",
+      roleList: roleList,
+      accountDetail: accountDetail
+    })
+  }catch(error){
+    res.redirect(`/${pathAdmin}/setting/account-admin/list`);
+  }
+}
+
+module.exports.accountAdminEditPatch=async(req,res)=>{
+  try{
+    const id = req.params.id;
+
+    const  accountDetail = await accountAdmin.findOne({
+      _id: id,
+      deleted: false
+    })
+
+    if(!accountDetail){
+      res.json({
+        code: "error",
+        message: "Bản ghi không tồn tại!"
+      })
+      return;
+    }
+    
+    const existEmail = await accountAdmin.findOne({
+      _id: { $ne: id }, //$ne: not equal
+      email: req.body.email
+    }) // tìm bản ghi có id khác mà trùng email vs req.body.email
+
+    if(existEmail){
+      res.json({
+        code: "error",
+        message: "Email đã tồn tại!"
+      })
+      return;
+    }
+
+    if(req.body.password){
+      //Mã hóa mât khẩu
+      const salt = await bcrypt.genSaltSync(10);
+      req.body.password = await bcrypt.hashSync(req.body.password, salt);
+    }else{
+      delete req.body.password;
+    }
+
+    req.body.updatedBy = req.account.id;
+    if(req.file){
+      req.body.avatar = req.file.path;
+    }
+    else{
+      delete req.body.avatar;
+    }
+
+    await accountAdmin.updateOne({
+      _id: id,
+      deleted: false
+    },req.body);
+    
+    res.json({
+      code: "success",
+      message: "Cập nhật tài khoản thành công!"
+    })
+  }catch(error){
+    res.json({
+      code: "error",
+      message: "Tài khoản không hợp lệ!"
+    })
+  }
+}
 module.exports.roleList=async(req,res)=>{
   const find = {
     deleted: false
