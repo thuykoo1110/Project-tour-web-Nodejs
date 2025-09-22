@@ -77,6 +77,10 @@ module.exports.accountAdminList=async(req,res)=>{
     find.slug = keywordRegex;
   }
 
+  if(req.query.role){
+    find.role = req.query.role;
+  }
+
   // Phân trang
   const limitItems = 4;
   const page = parseInt(req.query.page) > 0? parseInt(req.query.page) : 1;
@@ -108,10 +112,15 @@ module.exports.accountAdminList=async(req,res)=>{
     }
   }
 
+  const roleList = await Role.find({
+    deleted: false
+  });
+
   res.render('admin/pages/setting-account-admin-list',{
     pageTitle: "Tài khoản quản trị",
     accountAdminList: accountAdminList,
-    pagination: pagination
+    pagination: pagination,
+    roleList: roleList
   })
 }
 

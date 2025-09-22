@@ -1419,3 +1419,25 @@ if(listButtonDestroy.length > 0){
   })
 }
 // End Button Destroy
+
+// Filter Role
+const filterRole = document.querySelector("[filter-role]");
+if(filterRole){
+  const url = new URL(window.location.href);
+  filterRole.addEventListener("change", ()=>{
+    const value = filterRole.value;
+    if(value){
+      url.searchParams.set("role", value);
+    }
+    else{
+      url.searchParams.delete("role");
+    }
+    window.location.href = url.href;
+  })
+
+  const valueCurrent = url.searchParams.get("role");
+  if(valueCurrent){
+    filterRole.value = valueCurrent;
+  }
+}
+// End Filter Role
