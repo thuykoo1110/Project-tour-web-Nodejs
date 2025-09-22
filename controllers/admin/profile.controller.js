@@ -1,5 +1,7 @@
 const Role = require('../../models/roles.model')
 const AccountAdmin = require('../../models/account-admin.model')
+const bcrypt = require('bcryptjs')
+
 module.exports.edit=async(req,res)=>{
   if(req.account.role){
     const roleInfo = await Role.findOne({
@@ -40,7 +42,7 @@ module.exports.editPatch=async(req,res)=>{
     _id: req.account.id,
     deleted: false
   }, req.body);
-  
+
   res.json({
     code: "success",
     message: "Cập nhật thông tin thành công!"
@@ -50,5 +52,20 @@ module.exports.editPatch=async(req,res)=>{
 module.exports.changePassword=async(req,res)=>{
   res.render('admin/pages/profile-change-password',{
     pageTitle: "Thay đổi mật khẩu profile"
+  })
+}
+
+module.exports.changePasswordPatch = async(req,res) => {
+  const salt = await bcrypt.genSalt(10);
+  req.body.password = await bcrypt.hash(req.body.password,salt);
+
+  await AccountAdmin.updateOne({
+    _id: req.account.id,
+    deleted: false
+  }, req.body)
+  
+  res.json({
+    code: "success",
+    message: "Đã đổi mật khẩu thành công!"
   })
 }
