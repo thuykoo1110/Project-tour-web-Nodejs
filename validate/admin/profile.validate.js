@@ -28,7 +28,8 @@ module.exports.profilePatch = async(req,res,next) => {
       .messages({
         "phone-format": 'Số điện thoại không đúng định dạng!',
         "string.empty": 'Vui lòng nhập số điện thoại!'
-      })
+      }),
+    avatar: Joi.string().allow("")
   })
 
   const { error } = schema.validate(req.body);
