@@ -110,6 +110,13 @@ module.exports.create=async (req,res)=>{
 
 module.exports.createPost=async (req,res)=>{
   // console.log(req.file);  //dạng file
+  if(!req.permissions.includes("category-create")){
+      res.json({
+        code: "error",
+        message: "Không có quyền!"
+      })
+      return;
+    }
   if(req.body.position){
     req.body.position = parseInt(req.body.position);
   }
@@ -159,6 +166,13 @@ module.exports.edit=async (req,res)=>{
 
 module.exports.editPatch = async(req,res) => {
   try{
+    if(!req.permissions.includes("category-edit")){
+      res.json({
+        code: "error",
+        message: "Không có quyền!"
+      })
+      return;
+    }
     // console.log(req.params.id);
     // console.log(req.file);
     // console.lof(req.body);
@@ -202,6 +216,13 @@ module.exports.editPatch = async(req,res) => {
 
 module.exports.deletePatch = async(req,res) => {
   try{
+    if(!req.permissions.includes("category-delete")){
+      res.json({
+        code: "error",
+        message: "Không có quyền!"
+      })
+      return;
+    }
     const id = req.params.id;
     
     //Model.updateOne( filter,   // điều kiện tìm document cần update
@@ -235,6 +256,13 @@ module.exports.changeMultiPatch = async (req,res) =>{
     switch(option){
       case "active":
       case "inactive":
+        if(!req.permissions.includes("category-edit")){
+          res.json({
+            code: "error",
+            message: "Không có quyền!"
+          })
+          return;
+        }
         await Category.updateMany({
           _id: { $in: ids } //update nhìu item dùng updateMany
         },{
@@ -247,6 +275,13 @@ module.exports.changeMultiPatch = async (req,res) =>{
         })
         break;
       case "delete":
+        if(!req.permissions.includes("category-delete")){
+          res.json({
+            code: "error",
+            message: "Không có quyền!"
+          })
+          return;
+        }
         await Category.updateMany({
           _id: { $in: ids } //update nhìu item dùng updateMany
         },{

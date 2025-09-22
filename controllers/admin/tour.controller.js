@@ -112,6 +112,13 @@ module.exports.create = async (req,res)=>{
 }
 
 module.exports.createPost = async (req,res)=>{
+  if(!req.permissions.includes("tour-create")){
+    res.json({
+      code: "error",
+      message: "Không có quyền!"
+    })
+    return;
+  }
   if(req.body.position){
     req.body.position = parseInt(req.body.position);
   }
@@ -235,6 +242,13 @@ module.exports.edit = async (req, res) => {
 
 module.exports.editPatch = async (req, res) => {
   try {
+    if(!req.permissions.includes("tour-edit")){
+      res.json({
+        code: "error",
+        message: "Không có quyền!"
+      })
+      return;
+    }
     const id = req.params.id;
 
     if(req.body.position) {
@@ -283,6 +297,13 @@ module.exports.editPatch = async (req, res) => {
 
 module.exports.deletePatch = async (req,res) => {
   try{
+    if(!req.permissions.includes("tour-delete")){
+      res.json({
+        code: "error",
+        message: "Không có quyền!"
+      })
+      return;
+    }
     const id = req.params.id;
 
     await Tour.updateOne({
@@ -305,53 +326,15 @@ module.exports.deletePatch = async (req,res) => {
   }
 }
 
-module.exports.changeMultiPatch = async (req,res) =>{
-  try{
-    const { option, ids } = req.body;
-
-    switch(option){
-      case "active":
-      case "inactive":
-        await Tour.updateMany({
-          _id: { $in: ids}
-        },{
-          status: option
-        });
-        res.json({
-          code: "success",
-          message: "Cập nhật thành công!"
-        })
-        break;
-      case "delete":
-        await Tour.updateMany({
-          _id: { $in: ids } //update nhìu item dùng updateMany
-        },{
-          deleted: true,
-          deletedBy: req.account.id,
-          deletedAt: Date.now()
-        });
-        res.json({
-          code: "success",
-          message: "Đã xóa thành công!"
-        })
-        break;
-      default: 
-        res.json({
-          code: "error",
-          message: "Hành động không hợp lệ!"
-        })
-        break;
-    }
-  }catch(error){
-    res.json({
-      code: "error",
-      message: "Bản ghi không hợp lệ!"
-    })
-  }
-}
-
 module.exports.undoPatch = async (req,res) => {
   try{
+    if(!req.permissions.includes("tour-trash")){
+      res.json({
+        code: "error",
+        message: "Không có quyền!"
+      })
+      return;
+    }
     const id = req.params.id;
 
     await Tour.updateOne({
@@ -374,6 +357,13 @@ module.exports.undoPatch = async (req,res) => {
 
 module.exports.destroyDelete = async (req,res) => {
   try{
+    if(!req.permissions.includes("tour-trash")){
+      res.json({
+        code: "error",
+        message: "Không có quyền!"
+      })
+      return;
+    }
     const id = req.params.id;
 
     await Tour.deleteOne({
@@ -400,6 +390,13 @@ module.exports.changeMultiPatch = async (req,res) =>{
     switch(option){
       case "active":
       case "inactive":
+        if(!req.permissions.includes("tour-edit")){
+          res.json({
+            code: "error",
+            message: "Không có quyền!"
+          })
+          return;
+        }
         await Tour.updateMany({
           _id: { $in: ids}
         },{
@@ -411,6 +408,13 @@ module.exports.changeMultiPatch = async (req,res) =>{
         })
         break;
       case "undo":
+        if(!req.permissions.includes("tour-trash")){
+          res.json({
+            code: "error",
+            message: "Không có quyền!"
+          })
+          return;
+        }
         await Tour.updateMany({
           _id: { $in: ids } //update nhìu item dùng updateMany
         },{
@@ -422,6 +426,13 @@ module.exports.changeMultiPatch = async (req,res) =>{
         })
         break;
       case "delete":
+        if(!req.permissions.includes("tour-delete")){
+          res.json({
+            code: "error",
+            message: "Không có quyền!"
+          })
+          return;
+        }
         await Tour.updateMany({
           _id: { $in: ids } //update nhìu item dùng updateMany
         },{
@@ -435,6 +446,13 @@ module.exports.changeMultiPatch = async (req,res) =>{
         })
         break;
       case "destroy":
+        if(!req.permissions.includes("tour-trash")){
+          res.json({
+            code: "error",
+            message: "Không có quyền!"
+          })
+          return;
+        }
         await Tour.deleteMany({
           _id: { $in: ids } //update nhìu item dùng updateMany
         });

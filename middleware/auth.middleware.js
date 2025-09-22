@@ -33,7 +33,9 @@ module.exports.verifyToken = async (req,res,next) => {
       _id: existAccount.role
     })
     if(roleInfo){
-      existAccount.roleName = roleInfo.name
+      existAccount.roleName = roleInfo.name;
+      res.locals.permissions = roleInfo.permissions;
+      req.permissions = roleInfo.permissions;
     }
   }
   req.account = existAccount;

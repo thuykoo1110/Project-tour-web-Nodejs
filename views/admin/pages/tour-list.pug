@@ -1,134 +1,141 @@
 extends ../layouts/default.pug
 
 block main
-  h1.box-title Quản lý tour
+  if(permissions.includes("tour-view"))
+    h1.box-title Quản lý tour
 
-  //- Section 4
-  .section-4
-    .inner-wrap
-      .inner-item.inner-label
-        <i class="fa-solid fa-filter"></i> Bộ lọc
-      .inner-item
-        select(filter-status)
-          option(value="") Trạng thái
-          option(value="active") Hoạt động
-          option(value="inactive") Tạm dừng
-      .inner-item
-        select(filter-created-by)
-          option(value="") Người tạo
-          each item in accountAdminList   
-            option(value=item.id) #{item.fullName}
-      .inner-item.inner-date
-        input(type="date" filter-start-date)
-        span -
-        input(type="date" filter-end-date)
-      .inner-item
-        select
-          option(value="") Danh mục
-          option(value="") Danh mục 1
-          option(value="") Danh mục 2
-      .inner-item
-        select
-          option(value="") Mức giá
-          option(value="") Dưới 2tr
-          option(value="") 2tr đến 4tr
-          option(value="") 4tr đến 8tr
-          option(value="") Trên 8tr
-      .inner-item.inner-reset(filter-reset)
-        <i class="fa-solid fa-rotate-left"></i> Xóa bộ lọc
-  //- End Section 4
-
-  //- Section 5
-  .section-5
-    .inner-wrap
-      .inner-change-status(
-        change-multi 
-        data-api=`/${pathAdmin}/tour/change-multi`
-      )
+    //- Section 4
+    .section-4
+      .inner-wrap
+        .inner-item.inner-label
+          <i class="fa-solid fa-filter"></i> Bộ lọc
+        .inner-item
+          select(filter-status)
+            option(value="") Trạng thái
+            option(value="active") Hoạt động
+            option(value="inactive") Tạm dừng
+        .inner-item
+          select(filter-created-by)
+            option(value="") Người tạo
+            each item in accountAdminList   
+              option(value=item.id) #{item.fullName}
+        .inner-item.inner-date
+          input(type="date" filter-start-date)
+          span -
+          input(type="date" filter-end-date)
         .inner-item
           select
-            option(value="") -- Hành động --
-            option(value="active") Hoạt động
-            option(value="inactive") Dừng hoạt động
-            option(value="delete") Xóa
+            option(value="") Danh mục
+            option(value="") Danh mục 1
+            option(value="") Danh mục 2
         .inner-item
-          button Áp dụng
-      .inner-search
-        <i class="fa-solid fa-magnifying-glass"></i>
-        input(type="text" placeholder="Tìm kiếm" search)
-      .inner-button-create
-        a(href=`/${pathAdmin}/tour/create`) + Tạo mới
-      .inner-button-trash
-        a(href=`/${pathAdmin}/tour/trash`) Thùng rác
-  //- End Section 5
+          select
+            option(value="") Mức giá
+            option(value="") Dưới 2tr
+            option(value="") 2tr đến 4tr
+            option(value="") 4tr đến 8tr
+            option(value="") Trên 8tr
+        .inner-item.inner-reset(filter-reset)
+          <i class="fa-solid fa-rotate-left"></i> Xóa bộ lọc
+    //- End Section 4
 
-  //- Section 6
-  .section-6
-    .table-2
-      table
-        thead
-          tr
-            th(class="inner-center")
-              input(type="checkbox" class="inner-check" check-all)
-            th Tên tour
-            th Ảnh đại diện
-            th Giá
-            th Còn lại
-            th(class="inner-center") Vị trí
-            th(class="inner-center") Trạng thái
-            th Tạo bởi
-            th Cập nhật bởi
-            th Hành động
-        tbody
-          each item in tourList
+    //- Section 5
+    .section-5
+      .inner-wrap
+        .inner-change-status(
+          change-multi 
+          data-api=`/${pathAdmin}/tour/change-multi`
+        )
+          .inner-item
+            select
+              option(value="") -- Hành động --
+              if(permissions.includes("tour-edit"))
+                option(value="active") Hoạt động
+                option(value="inactive") Dừng hoạt động
+              if(permissions.includes("tour-delete"))
+                option(value="delete") Xóa
+          .inner-item
+            button Áp dụng
+        .inner-search
+          <i class="fa-solid fa-magnifying-glass"></i>
+          input(type="text" placeholder="Tìm kiếm" search)
+        if(permissions.includes("tour-create"))
+          .inner-button-create
+            a(href=`/${pathAdmin}/tour/create`) + Tạo mới
+        if(permissions.includes("tour-trash"))
+          .inner-button-trash
+            a(href=`/${pathAdmin}/tour/trash`) Thùng rác
+    //- End Section 5
+
+    //- Section 6
+    .section-6
+      .table-2
+        table
+          thead
             tr
-              td(class="inner-center")
-                input(type="checkbox" class="inner-check" check-item=item.id)
-              td #{item.name}
-              td
-                img(src=item.avatar class="inner-avatar")
-              td
-                div NL: #{item.priceNewAdult.toLocaleString("vi-VN")}
-                div TE: #{item.priceNewChildren.toLocaleString("vi-VN")}
-                div EB: #{item.priceNewBaby.toLocaleString("vi-VN")}
-              td
-                div NL: #{item.stockAdult}
-                div TE: #{item.stockChildren}
-                div EB: #{item.stockBaby}
-              td(class="inner-center") #{item.position}
-              td(class="inner-center")
-                if(item.status == "active")
-                  .badge.badge-green Hoạt động
-                else if(item.status=="inactive")
-                  .badge.badge-red Tạm dừng
-              td
-                div #{item.createdByFullName}
-                div.inner-time #{item.createdAtFormat}
-              td
-                div #{item.updatedByFullName}
-                div.inner-time #{item.updatedAtFormat}
-              td
-                .inner-buttons
-                  a(
-                    href=`/${pathAdmin}/tour/edit/${item.id}`
-                    class="inner-edit") 
-                    <i class="fa-regular fa-pen-to-square"></i>
-                  button(
-                    class="inner-delete"
-                    button-delete 
-                    data-api = `/${pathAdmin}/tour/delete/${item.id}`
-                    ) 
-                    <i class="fa-regular fa-trash-can"></i>
-  //- End Section 6
+              th(class="inner-center")
+                input(type="checkbox" class="inner-check" check-all)
+              th Tên tour
+              th Ảnh đại diện
+              th Giá
+              th Còn lại
+              th(class="inner-center") Vị trí
+              th(class="inner-center") Trạng thái
+              th Tạo bởi
+              th Cập nhật bởi
+              th Hành động
+          tbody
+            each item in tourList
+              tr
+                td(class="inner-center")
+                  input(type="checkbox" class="inner-check" check-item=item.id)
+                td #{item.name}
+                td
+                  img(src=item.avatar class="inner-avatar")
+                td
+                  div NL: #{item.priceNewAdult.toLocaleString("vi-VN")}
+                  div TE: #{item.priceNewChildren.toLocaleString("vi-VN")}
+                  div EB: #{item.priceNewBaby.toLocaleString("vi-VN")}
+                td
+                  div NL: #{item.stockAdult}
+                  div TE: #{item.stockChildren}
+                  div EB: #{item.stockBaby}
+                td(class="inner-center") #{item.position}
+                td(class="inner-center")
+                  if(item.status == "active")
+                    .badge.badge-green Hoạt động
+                  else if(item.status=="inactive")
+                    .badge.badge-red Tạm dừng
+                td
+                  div #{item.createdByFullName}
+                  div.inner-time #{item.createdAtFormat}
+                td
+                  div #{item.updatedByFullName}
+                  div.inner-time #{item.updatedAtFormat}
+                td
+                  .inner-buttons
+                    if(permissions.includes("tour-edit"))
+                      a(
+                        href=`/${pathAdmin}/tour/edit/${item.id}`
+                        class="inner-edit") 
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    if(permissions.includes("tour-delete"))
+                      button(
+                        class="inner-delete"
+                        button-delete 
+                        data-api = `/${pathAdmin}/tour/delete/${item.id}`
+                        ) 
+                        <i class="fa-regular fa-trash-can"></i>
+    //- End Section 6
 
-  //- Section 7
-  .section-7
-    span.inner-label
-      - if (pagination.totalRecord > 0 && tourList && tourList.length > 0)
-        | Hiển thị #{(pagination.skip || 0) + 1} - #{(pagination.skip || 0) + tourList.length} của #{pagination.totalRecord}
-      - else
-        | Hiển thị 0 - 0 của 0
-    select(class="inner-pagination" box-pagination)
-      - for(let i=1; i <= pagination.totalPage; i++)
-        option(value=i) Trang #{i}
+    //- Section 7
+    .section-7
+      span.inner-label
+        - if (pagination.totalRecord > 0 && tourList && tourList.length > 0)
+          | Hiển thị #{(pagination.skip || 0) + 1} - #{(pagination.skip || 0) + tourList.length} của #{pagination.totalRecord}
+        - else
+          | Hiển thị 0 - 0 của 0
+      select(class="inner-pagination" box-pagination)
+        - for(let i=1; i <= pagination.totalPage; i++)
+          option(value=i) Trang #{i}
   //- End Section 7

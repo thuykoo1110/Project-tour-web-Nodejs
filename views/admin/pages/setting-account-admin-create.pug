@@ -1,9 +1,10 @@
 extends ../layouts/default.pug
 
 block main
-  h1.box-title Tạo tài khoản quản trị
+  if(permissions.includes("setting-view"))
+    h1.box-title Tạo tài khoản quản trị
 
-  .section-8
+    .section-8
     form#setting-account-admin-create-form
       .inner-group
         label(class="inner-label" for="fullName") Họ tên
