@@ -1001,12 +1001,35 @@ if(profileEditForm) {
       let avatar = null;
       if(avatars.length > 0) {
         avatar = avatars[0].file;
+        const elementImageDefault =event.target.avatar.closest("[image-default]");
+        if(elementImageDefault){
+          const imageDefault = elementImageDefault.getAttribute("image-default");
+          if(imageDefault.includes(avatar.name)){
+            avatar = undefined
+          }
+        }
       }
+      
+      const formData = new FormData();
+      formData.append("fullName", fullName);
+      formData.append("phone", phone);
+      formData.append("email", email);
+      formData.append("avatar", avatar);
 
-      console.log(fullName);
-      console.log(email);
-      console.log(phone);
-      console.log(avatar);
+      fetch(`/${pathAdmin}/profile/edit`,{
+        method: "PATCH",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code=="error"){
+            notify.error(data.message)
+          }
+          else if(data.code == "success"){
+            drawNotify(data.code, data.message);
+            window.location.reload();
+          }
+        })
     })
   ;
 }
