@@ -190,20 +190,18 @@ block main
       h2.box-title(
         data-aos-duration="800" 
         data-aos="fade-up"
-        ) Tour Trong Nước
+        ) #{categorySection4.name}
       .inner-wrap(
         data-aos-delay="150" 
         data-aos-duration="800" 
         data-aos="fade-up"
         )
-        //- // Product Item
-        //- +product-item()
-        //- // End Product Item
-        //- // Product Item
-        //- +product-item()
-        //- // End Product Item
+        each item in tourListSection4
+          // Product Item
+          +product-item(item)
+          // End Product Item
       .inner-button
-        a.button-outline(href="#") Xem tất cả
+        a.button-outline(href=`/category/${categorySection4.slug}`) Xem tất cả
   // End Section 4
   // Section 5
   .section-5(

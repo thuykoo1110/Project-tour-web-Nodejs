@@ -1,10 +1,12 @@
 const SettingwebsiteInfo = require("../../models/setting-website-info.model")
-const { permissionList, pathAdmin } = require("../../config/variable.config")
+const { permissionList} = require("../../config/variable.config")
 const Role = require('../../models/roles.model')
 const slugify = require('slugify')
 const accountAdmin = require('../../models/account-admin.model')
 const bcrypt=require("bcryptjs")
 const moment = require('moment')
+const Category = require('../../models/catagory.model')
+const categoryHelper = require('../../helpers/category.helper')
 
 module.exports.list=async(req,res)=>{
   res.render('admin/pages/setting-list',{
@@ -15,9 +17,14 @@ module.exports.list=async(req,res)=>{
 module.exports.websiteInfo=async(req,res)=>{
   const settingWebsiteInfo = await SettingwebsiteInfo.findOne({});
 
+  const categoryList = await Category.find({
+    deleted: false
+  })
+  const categoryTree = categoryHelper.buildCategoryTree(categoryList,"");
   res.render('admin/pages/setting-website-info',{
     pageTitle: "Thông tin website",
-    settingWebsiteInfo: settingWebsiteInfo
+    settingWebsiteInfo: settingWebsiteInfo,
+    categoryList: categoryTree
   })
 }
 

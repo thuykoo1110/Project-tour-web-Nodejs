@@ -40,7 +40,7 @@ module.exports.verifyToken = async (req,res,next) => {
   }
   req.account = existAccount;
 
-  res.locals.account = existAccount; //lưu thông tin vào file pug
+  res.locals.account = existAccount; //lưu thông tin vào file pug, lưu vào view vs controller
   next();
 }
   catch(error){

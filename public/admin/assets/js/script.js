@@ -586,13 +586,7 @@ if(settingWebsiteInfoForm) {
       if(favicons.length > 0) {
         favicon = favicons[0].file;
       }
-
-      // console.log(websiteName);
-      // console.log(phone);
-      // console.log(email);
-      // console.log(address);
-      // console.log(logo);
-      // console.log(favicon);
+      const dataSection4 = event.target.dataSection4.value;
 
       const formData = new FormData();
       formData.append("websiteName", websiteName);
@@ -601,6 +595,7 @@ if(settingWebsiteInfoForm) {
       formData.append("address", address);
       formData.append("logo", logo);
       formData.append("favicon", favicon);
+      formData.append("dataSection4",dataSection4);
 
       fetch(`/${pathAdmin}/setting/website-info`,{
         method: "PATCH",

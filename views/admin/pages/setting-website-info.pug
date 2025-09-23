@@ -1,5 +1,5 @@
 extends ../layouts/default.pug
-
+include ../mixins/option.pug
 block main
   if(permissions.includes("setting-view"))
     h1.box-title Thông tin website
@@ -26,6 +26,11 @@ block main
           label(class="inner-label" for="favicon" ) Favicon
           div(class="inner-upload-image" image-default=settingWebsiteInfo.favicon)
             input(type="file" id="favicon" accept="image/*" filepond-image name="favicon")
+        .inner-group
+          label(class="inner-label" for="dataSection4") Dữ liệu Section 4
+          select(id="dataSection4" name="dataSection4")
+            option(value="") -- Chọn danh mục --
+            +options(categoryList,0,settingWebsiteInfo.dataSection4)
         .inner-button.inner-two-col
           button Cập nhật
       .inner-back

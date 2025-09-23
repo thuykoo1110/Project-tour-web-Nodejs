@@ -1,3 +1,5 @@
+const category = require("../models/catagory.model");
+
 const buildCategoryTree = (categoryList, parentID="") => {
   const tree = [];
 
@@ -17,3 +19,27 @@ const buildCategoryTree = (categoryList, parentID="") => {
 }
 
 module.exports.buildCategoryTree = buildCategoryTree
+
+// getCategoryChild
+const getCategoryChild = async (parentId) =>{
+  const result = [];
+
+  const childrenList = await category
+    .find({
+      status: "active",
+      deleted: false,
+      parent: parentId
+    })
+  
+  for(const item of childrenList){
+    result.push({
+      id: item.id,
+      name: item.name
+    })
+
+    await getCategoryChild(item.id);
+  };
+  return result;
+}
+module.exports.getCategoryChild = getCategoryChild
+// End getCategoryChild 
