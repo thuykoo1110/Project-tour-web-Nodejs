@@ -1,7 +1,7 @@
 const router=require('express').Router()
 const accountController=require('../../controllers/admin/account.controller')
 const accountValidate=require('../../validate/admin/account.validate')
-const authMiddleware = require('../../middleware/auth.middleware')
+const authMiddleware = require("../../middleware/admin/auth.middleware")
 router.get('/login',accountController.login)
 router.post('/login',accountValidate.loginPost,accountController.loginPost)
 

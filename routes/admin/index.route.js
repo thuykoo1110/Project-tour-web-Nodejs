@@ -8,7 +8,7 @@ const userRoutes=require('./user.route')
 const contactRoutes=require('./contact.route')
 const settingRoutes=require('./setting.route')
 const profileRoutes=require('./profile.route')
-const authMiddlewares = require("../../middleware/auth.middleware")
+const authMiddlewares = require("../../middleware/admin/auth.middleware")
 
 router.use('/account',accountRoutes)
 router.use('/dashboard',authMiddlewares.verifyToken, dashboardRoutes)

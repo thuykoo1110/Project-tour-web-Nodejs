@@ -6,7 +6,7 @@ const schema = new mongoose.Schema({
   email: String,
   address: String,
   logo: String,
-  favicon: String
+  favicon: String,
 })
 
 const SettingwebsiteInfo = mongoose.model('SettingwebsiteInfo', schema, 'setting-website-info');
