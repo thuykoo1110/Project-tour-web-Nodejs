@@ -278,6 +278,7 @@ module.exports.editPatch = async (req, res) => {
 
     req.body.updatedBy = req.account.id;
 
+    req.body.featured = req.body.featured == "true" ? true : false;
     await Tour.updateOne({
       _id: id,
       deleted: false

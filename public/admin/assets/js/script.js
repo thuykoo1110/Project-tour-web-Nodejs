@@ -317,6 +317,7 @@ if(tourCreateForm) {
       const departureDate = event.target.departureDate.value;
       const information = tinymce.get("information").getContent();
       const schedules = [];
+      const featured = event.target.featured.value;
 
       // locations
       const listElementLocation = tourCreateForm.querySelectorAll('input[name="locations"]:checked');
@@ -364,8 +365,9 @@ if(tourCreateForm) {
       formData.append("vehicle", vehicle);
       formData.append("information", information);
       formData.append("schedules", JSON.stringify(schedules));
-
-       fetch(`/${pathAdmin}/tour/create`, {
+      formData.append("featured", featured);
+      
+      fetch(`/${pathAdmin}/tour/create`, {
         method: "POST",
         body: formData
       })
@@ -425,6 +427,7 @@ if(tourEditForm) {
       const stockBaby = event.target.stockBaby.value;
       const locations = [];
       const time = event.target.time.value;
+      const featured = event.target.featured.value;
       const vehicle = event.target.vehicle.value;
       const departureDate = event.target.departureDate.value;
       const information = tinymce.get("information").getContent();
@@ -476,6 +479,7 @@ if(tourEditForm) {
       formData.append("departureDate", departureDate);
       formData.append("information", information);
       formData.append("schedules", JSON.stringify(schedules));
+      formData.append("featured", featured);
 
       fetch(`/${pathAdmin}/tour/edit/${id}`, {
         method: "PATCH",
