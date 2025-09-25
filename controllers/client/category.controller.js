@@ -2,6 +2,7 @@ const Category = require('../../models/catagory.model')
 const categoryHelper = require('../../helpers/category.helper')
 const Tour = require('../../models/tour.model')
 const moment = require('moment')
+const City = require('../../models/city.model')
 
 module.exports.list = async(req,res) => {
   const slug = req.params.slug;
@@ -65,10 +66,19 @@ module.exports.list = async(req,res) => {
     }
   }
   // End tour list  in caategory
+
+  // city list in filter
+  const cityList = await City
+    .find({})
+    .sort({
+      name: "asc"
+    })
+  // End ciity list
   res.render('client/pages/tour-list',{
     pageTitle: categoryDetail.name,
     breadCrumb: breadCrumb,
     categoryDetail: categoryDetail,
-    tourList: tourList
+    tourList: tourList,
+    cityList: cityList
   })
 }
