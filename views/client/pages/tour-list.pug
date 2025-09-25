@@ -4,7 +4,7 @@ include ../mixins/product.pug
 include ../mixins/box-breadcrumb.pug
 block main
   // Breadcrumb
-  +box-breadcrumb()
+  +box-breadcrumb(breadCrumb)
   // End Breadcrumb
   // Section 9
   .section-9
@@ -96,15 +96,15 @@ block main
               span.inner-title Bộ Lọc
               i.fa-solid.fa-filter
           .inner-list-tour
-            // Product Item
-            +product-item()
-            // End Product Item
-            // Product Item
-            +product-item()
-            // End Product Item
-            // Product Item
-            +product-item()
-            // End Product Item
+            //- // Product Item
+            //- +product-item()
+            //- // End Product Item
+            //- // Product Item
+            //- +product-item()
+            //- // End Product Item
+            //- // Product Item
+            //- +product-item()
+            //- // End Product Item
           // Pagination
           .box-pagination
             button
