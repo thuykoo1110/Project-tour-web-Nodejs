@@ -27,7 +27,6 @@ module.exports.home = async (req, res) => {
   const categoryIdSection4 = res.locals.settingWebsiteInfo.dataSection4;
   const categoryChildrenSection4 = await categoryHelper.getCategoryChild(categoryIdSection4); //vì là hàm async nên có await
   const categoryChildIdSection4 = categoryChildrenSection4.map(item => item.id);
-
   const categorySection4 = await Category
     .findOne({
       _id: categoryIdSection4,

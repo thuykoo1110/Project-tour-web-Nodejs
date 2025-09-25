@@ -201,13 +201,6 @@ if(categoryCreateForm) {
             window.location.reload();
           }
         })
-
-      console.log(name);
-      console.log(parent);
-      console.log(position);
-      console.log(status);
-      console.log(avatar);
-      console.log(description);
     })
   ;
 }

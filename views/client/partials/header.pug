@@ -42,8 +42,8 @@ header.header
               a(href=`/category/${item.slug}`) #{item.name}
               if(item.children && item.children.length > 0)
                 i.fa-solid.fa-caret-down
-                each itemChild in item.children
-                  ul
+                ul
+                  each itemChild in item.children
                     li
                       a(href=`/category/${itemChild.slug}`) #{itemChild.name}
           li

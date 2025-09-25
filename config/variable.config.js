@@ -62,6 +62,10 @@ module.exports.permissionList = [
     value: "contact-view"
   },
   {
+    label: "Chỉnh sửa thông tin liên hệ",
+    value: "contact-edit"
+  },
+  {
     label: "Xem cài đặt chung",
     value: "setting-view"
   }
