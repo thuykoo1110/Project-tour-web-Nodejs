@@ -420,7 +420,57 @@ if(orderForm) {
           url.searchParams.delete(item)
         }
       }
-      console.log(url.href)
     })
   }
 // End Box Filter
+
+// Form Seacrh
+const formSearch = document.querySelector("[form-search]");
+if(formSearch){
+  const url = new URL('/search', window.location.origin);
+  formSearch.addEventListener("submit", (event) =>{
+    event.preventDefault(); //Ngăn chặn mặc định load lại trang 
+
+    // Destination
+    const locationTo = formSearch.locationTo.value;
+    if(locationTo){
+      url.searchParams.set("locationTo", locationTo);
+    }
+    else{
+      url.searchParams.delete("locationTo");
+    }
+    // End Destination
+
+    // Số lượng
+    const listQuantity = [
+      "stockAdult",
+      "stockChildren",
+      "stockBaby",
+    ];
+    for (const item of listQuantity) {
+      const element = formSearch.querySelector(`[${item}]`);
+      const value = element.innerHTML.trim();
+        if(value) {
+        url.searchParams.set(item, value)
+      } else {
+        url.searchParams.delete(item)
+      }
+    }
+
+    // Hết số lượng
+
+    // Departure Date
+    const departureDate = formSearch.departureDate.value;
+    if(departureDate){
+      url.searchParams.set("departureDate", departureDate);
+    }
+    else{
+      url.searchParams.delete("departureDate");
+    }
+    // End departure date
+
+    console.log(url.href)
+    // window.location.href = url.href
+  }) //event của form này là submit
+}
+// End Form Search
