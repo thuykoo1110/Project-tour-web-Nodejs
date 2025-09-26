@@ -420,7 +420,16 @@ if(orderForm) {
           url.searchParams.delete(item)
         }
       }
+      window.location.href = url.href;
     })
+
+    const urlCurrent = new URL(window.location.href);
+    for(const item of filterList){
+      const valueCurrent = urlCurrent.searchParams.get(item);
+      if(valueCurrent){
+        boxFilter.querySelector(`[name="${item}"]`).value = valueCurrent;
+      }
+    }
   }
 // End Box Filter
 
@@ -468,9 +477,7 @@ if(formSearch){
       url.searchParams.delete("departureDate");
     }
     // End departure date
-
-    console.log(url.href)
-    // window.location.href = url.href
+    window.location.href = url.href
   }) //event của form này là submit
 }
 // End Form Search
