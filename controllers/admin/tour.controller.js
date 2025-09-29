@@ -49,7 +49,7 @@ module.exports.list = async (req,res)=>{
   }
 
   const skip = (page-1)*limitItems;
-  const totalRecord = await Category.countDocuments(find);
+  const totalRecord = await Tour.countDocuments(find);
   const totalPage = Math.ceil(totalRecord/limitItems);
   const pagination = {
     skip: skip,

@@ -1,17 +1,19 @@
 mixin box-breadcrumb(list)
   // Breadcrumb
-  - const itemLast = list[list.length-1];
-  .box-breadcrumb
-    .inner-image
-      img(
-        alt=itemLast.name 
-        src=itemLast.avatar
-        )
-    .inner-content
-      .container
-        h1.inner-title #{itemLast.name}
-        .inner-list
-          a(href="/") Trang Chủ
-          each item in list 
-            a(href=`/category/${item.slug}`) #{item.name}
+  - list = Array.isArray(list) ? list : []
+  - const itemLast = list.length ? list[list.length - 1] : null
+  if list.length
+    .box-breadcrumb
+      .inner-image
+        img(
+          alt=itemLast.name 
+          src=itemLast.avatar
+          )
+      .inner-content
+        .container
+          h1.inner-title #{itemLast.name}
+          .inner-list
+            a(href="/") Trang Chủ
+            each item in list 
+              a(href=`/category/${item.slug}`) #{item.name}
   // End Breadcrumb

@@ -481,3 +481,58 @@ if(formSearch){
   }) //event của form này là submit
 }
 // End Form Search
+
+// Inner Sort
+const boxSort = document.querySelector(".inner-sort .inner-list")
+if(boxSort){
+  const url = new URL(window.location.href)
+  const buttons = boxSort.querySelectorAll("button");
+  buttons.forEach(button => {
+    button.addEventListener("click", () =>{
+      const currentActive = boxSort.querySelector("button.active");
+      if (currentActive) currentActive.classList.remove("active");
+      button.classList.add("active");
+      const value = button.getAttribute("data-sort");
+      if(value){
+        url.searchParams.set("sort", value);
+      }
+      else{
+        url.searchParams.delete("sort");
+      }
+      window.location.href = url.href;
+    })
+  })
+  
+  const valueCurrent = url.searchParams.get("sort");
+  if(valueCurrent){
+    buttons.forEach(button => {
+      if (button.getAttribute("data-sort") === valueCurrent) {
+        button.classList.add("active");
+      }
+    })
+  }
+} 
+
+// End Inner Sort
+
+// Box Pagination
+const boxPagination = document.querySelector(".box-pagination");
+if (boxPagination) {
+  const url = new URL(window.location.href);
+  const buttons = boxPagination.querySelectorAll("button[data-page]");
+
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      const page = button.getAttribute("data-page");
+
+      if (page) {
+        url.searchParams.set("page", page);
+      } else {
+        url.searchParams.delete("page");
+      }
+
+      window.location.href = url.href;
+    });
+  });
+}
+// End Box Pagination

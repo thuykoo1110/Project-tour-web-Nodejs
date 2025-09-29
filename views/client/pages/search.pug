@@ -73,21 +73,21 @@ block main
             .inner-sort
               .inner-label Sắp xếp:
               .inner-list
-                button
+                button(data-sort="price-asc")
                   | Giá tăng dần
                   i.fa-solid.fa-square-caret-up
-                button
+                button(data-sort="price-desc")
                   | Giá giảm dần
                   i.fa-solid.fa-square-caret-down
-                button.active
+                button(data-sort="hot-sale")
                   | Khuyến Mại Hot
                   i.fa-solid.fa-tag
-                button
+                button(data-sort="most-viewed")
                   | Xem Nhiều
                   i.fa-solid.fa-eye
             .inner-count-record
               | Tất cả:
-              b 101 Tour
+              b  #{totalTour} Tour
             button.inner-filter-mobile
               span.inner-title Bộ Lọc
               i.fa-solid.fa-filter
@@ -98,13 +98,16 @@ block main
               // End Product Item
           // Pagination
           .box-pagination
-            button
+            button(disabled=(pagination.currentPage === 1) data-page=(pagination.currentPage - 1))
               i.fa-solid.fa-angles-left
-            button.active 1
-            button 2
-            button 3
-            button 4
-            button
+            - for (let i = 1; i <= pagination.totalPage; i++)
+              button(
+                class=(pagination.currentPage === i ? "active" : ""),
+                data-page=i)= i
+            button(
+              disabled=(pagination.currentPage === pagination.totalPage) 
+              data-page=(pagination.currentPage + 1)
+            )
               i.fa-solid.fa-angles-right
           // End Pagination
   // End Section 9
