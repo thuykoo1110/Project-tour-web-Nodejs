@@ -44,6 +44,7 @@ module.exports.detail = async (req, res) => {
 
   res.render('client/pages/tour-detail', {
     pageTitle: tourDetail.name,
-    breadCrumb: breadcrumb
+    breadCrumb: breadcrumb,
+    tourDetail: tourDetail
   })
 }

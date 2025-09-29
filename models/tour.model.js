@@ -13,6 +13,7 @@ const schema = mongoose.Schema(
       default: false
     },
     avatar: String,
+    images: Array,
     priceAdult: Number,
     priceChildren: Number,
     priceBaby: Number,
