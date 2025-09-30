@@ -8,6 +8,7 @@ const userRoutes=require('./user.route')
 const contactRoutes=require('./contact.route')
 const settingRoutes=require('./setting.route')
 const profileRoutes=require('./profile.route')
+const uploadRoutes = require('./upload.route')
 const authMiddlewares = require("../../middleware/admin/auth.middleware")
 
 router.use('/account',accountRoutes)
@@ -19,6 +20,7 @@ router.use('/user',authMiddlewares.verifyToken, userRoutes)
 router.use('/contact', authMiddlewares.verifyToken, contactRoutes)
 router.use('/setting',authMiddlewares.verifyToken, settingRoutes)
 router.use('/profile', authMiddlewares.verifyToken, profileRoutes)
+router.use('/upload',authMiddlewares.verifyToken, uploadRoutes)
 router.use(authMiddlewares.verifyToken, (req,res)=>{
   res.render('admin/pages/error-404',{
     pageTitle: "404 not found"
