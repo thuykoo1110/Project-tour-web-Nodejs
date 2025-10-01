@@ -635,3 +635,11 @@ if(boxTourDetail){
   })
 } 
 // End Box tour detail
+
+// Mini cart
+const miniCart = document.querySelector("[mini-cart]");
+if(miniCart){
+  const cart = JSON.parse(localStorage.getItem("cart"));
+  miniCart.innerHTML = cart.length;
+}
+// End mini cart
