@@ -554,7 +554,7 @@ if(boxTourDetail){
   const buttonAddCart = document.querySelector("[button-add-cart]");
   const tourId = buttonAddCart.getAttribute("tour-id");
 
-  const cart = JSON.parse(localStorage.getItem("cart")); //hiển thị giá trị trong localstorage kkhi reload web
+  const cart = JSON.parse(localStorage.getItem("cart")) || []; //hiển thị giá trị trong localstorage kkhi reload web
   const existItem = cart.find(item => item.tourId == tourId);
 
   const drawBoxTourDetail = () => {
@@ -618,7 +618,7 @@ if(boxTourDetail){
         quantityChildren: quantityChildren,
         quantityBaby: quantityBaby
       };
-      const cart = JSON.parse(localStorage.getItem("cart"));
+      const cart = JSON.parse(localStorage.getItem("cart"))||[];
       const indexItemExist = cart.findIndex(item => item.tourId == tourId);
       if(indexItemExist != -1) {
         cart[indexItemExist] = item;
@@ -640,7 +640,7 @@ if(boxTourDetail){
 // Mini cart
 const miniCart = document.querySelector("[mini-cart]");
 if(miniCart){
-  const cart = JSON.parse(localStorage.getItem("cart"));
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
   miniCart.innerHTML = cart.length;
 }
 // End mini cart
@@ -663,12 +663,14 @@ const drawCart = () => {
       }
       if(data.code == "success"){
         let subTotal = 0;
-        const htmlArray = data.cart.map(item => {
+        let htmlArray = [];
+        if(data.cart.length > 0){
+          htmlArray = data.cart.map(item => {
           subTotal += item.priceNewAdult * item.quantityAdult + item.priceNewChildren * item.quantityChildren + item.priceNewBaby * item.quantityBaby;
           return `
             <div class="inner-tour-item">
               <div class="inner-actions">
-                <button class="inner-delete">
+                <button class="inner-delete" button-delete tour-id="${item.tourId}">
                   <i class="fa-solid fa-xmark"></i>
                 </button>
                 <input class="inner-check" type="checkbox" />
@@ -742,8 +744,11 @@ const drawCart = () => {
               </div>
             </div>
           `;
-        });
-
+          });
+        } else {
+          htmlArray = ["<div class='inner-no-data'>Không có tour nào trong giỏ hàng.</div>"];
+        }
+        
         let discount = 0;
         let total = subTotal - discount;
 
@@ -753,7 +758,7 @@ const drawCart = () => {
         const elementCartSubTotal = document.querySelector("[cart-sub-total]");
         elementCartSubTotal.innerHTML = subTotal.toLocaleString("vi-VN");
 
-        const elementCartTotal = document.querySelector("[cart-sub-total]");
+        const elementCartTotal = document.querySelector("[cart-total]");
         elementCartTotal.innerHTML = total.toLocaleString("vi-VN");
 
         // Sự kiện cập nhật số lượng ở cart
@@ -784,6 +789,19 @@ const drawCart = () => {
               localStorage.setItem("cart", JSON.stringify(cart));
               drawCart();
             }
+          })
+        })
+
+        // Sự kiện xóa tour
+        const listButtonDelete = document.querySelectorAll("[button-delete]");
+        listButtonDelete.forEach(button => {
+          button.addEventListener("click", () =>{
+            const tourId = button.getAttribute("tour-id");
+            let cart = JSON.parse(localStorage.getItem("cart"));
+            cart = cart.filter(item => item.tourId != tourId);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            drawCart();
+            window.location.reload();
           })
         })
       }
