@@ -371,11 +371,43 @@ if(orderForm) {
       const phone = event.target.phone.value;
       const note = event.target.note.value;
       const method = event.target.method.value;
+      let cart = JSON.parse(localStorage.getItem("cart"));
+      cart = cart.filter(item => item.checked && (item.quantityAdult + item.quantityBaby + item.quantityChildren) > 0); 
+      
+      if(cart.length > 0){
+        const dataFinal = {
+          fullName: fullName,
+          phone: phone,
+          note: note,
+          method: method,
+          items: cart
+        };
 
-      console.log(fullName);
-      console.log(phone);
-      console.log(note);
-      console.log(method);
+        fetch("/order/create", {
+          method: "POST",
+          headers:{
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(dataFinal)
+        })
+          .then(res => res.json())
+          .then(data => {
+            if(data.code == "error"){
+              notify.error(data.message);
+            }
+            if(data.code == "success"){
+              // Cập nhật lại giỏ hàng - bỏ những tour đã đặt
+              let cart = JSON.parse(localStorage.getItem("cart"));
+              cart = cart.filter(item => item.checked == false);
+              localStorage.setItem("cart", JSON.stringify(cart));
+
+              drawNotify(data.code, data.message);
+              window.location.href = `/order/success?orderCode=${data.orderCode}&phone=${phone}`;
+            }
+          })
+      } else {
+        notify.error("Chọn ít nhất một tour!");
+      }
     })
   ;
 
