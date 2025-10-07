@@ -379,7 +379,7 @@ if(orderForm) {
           fullName: fullName,
           phone: phone,
           note: note,
-          method: method,
+          paymentMethod: method,
           items: cart
         };
 

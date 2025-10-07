@@ -70,3 +70,52 @@ module.exports.permissionList = [
     value: "setting-view"
   }
 ];
+
+module.exports.paymentMethodList = [
+  {
+    label: "Tiền mặt",
+    value: "money"
+  },
+  {
+    label: "Chuyển khoản ngân hàng",
+    value: "bank"
+  },
+  {
+    label: "Ví Momo",
+    value: "momo"
+  },
+  {
+    label: "ZaloPay",
+    value: "zalopay"
+  },
+  {
+    label: "VNPay",
+    value: "vnpay"
+  }
+]
+
+module.exports.paymentStatusList = [
+  {
+    label: "Chưa thanh toán",
+    value: "unpaid"
+  },
+  {
+    label: "Thanh toán",
+    value: "paid"
+  }
+]
+
+module.exports.statusList = [
+  {
+    label: "Khởi tạo",
+    value: "initial"
+  },
+  {
+    label: "Hoàn thành",
+    value: "done"
+  },
+  {
+    label: "Đã hủy",
+    value: "cancel"
+  }
+]
