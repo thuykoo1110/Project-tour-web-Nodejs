@@ -19,7 +19,12 @@ const schema = new mongoose.Schema(
       default: false
     },
     deletedBy: String,
-    deletedAt: Date
+    deletedAt: Date,
+    slug:{
+      type: String,
+      slug: "fullName",
+      unique: true
+    },
   },
   {
     timestamps: true, // Tự động sinh ra trường createdAt và updatedAt

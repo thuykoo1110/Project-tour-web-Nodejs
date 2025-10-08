@@ -100,7 +100,7 @@ module.exports.paymentStatusList = [
     value: "unpaid"
   },
   {
-    label: "Thanh toán",
+    label: "Đã thanh toán",
     value: "paid"
   }
 ]
@@ -108,14 +108,17 @@ module.exports.paymentStatusList = [
 module.exports.statusList = [
   {
     label: "Khởi tạo",
-    value: "initial"
+    value: "initial",
+    color: "orange"
   },
   {
     label: "Hoàn thành",
-    value: "done"
+    value: "done",
+    color: "green"
   },
   {
     label: "Đã hủy",
-    value: "cancel"
+    value: "cancel",
+    color: "red"
   }
 ]
