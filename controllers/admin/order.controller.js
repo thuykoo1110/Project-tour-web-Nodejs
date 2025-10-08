@@ -3,10 +3,11 @@ const Tour =  require('../../models/tour.model')
 const {
   paymentStatusList,
   paymentMethodList,
-  statusList
+  statusList,
+  pathAdmin
 } = require('../../config/variable.config')
 const moment = require('moment')
-const { default: slugify } = require('slugify')
+const City = require('../../models/city.model')
 
 module.exports.list=async(req,res)=>{
   const find = {
@@ -86,9 +87,46 @@ module.exports.list=async(req,res)=>{
   })
 }
 module.exports.edit=async(req,res)=>{
-  res.render('admin/pages/order-edit',{
-    pageTitle: "Chỉnh sửa đơn hàng"
-  })
+  try{
+    const id = req.params.id;
+
+    const orderDetail = await Order.findOne({
+      _id: id,
+      deleted: false
+    })
+
+    if(!orderDetail){
+      res.redirect(`/${pathAdmin}/order/list`);
+      return;
+    }
+    orderDetail.createdAtFormat = moment(orderDetail.createdAt).format("YYYY-MM-DDTHH:mm");
+
+    for(const item of orderDetail.items){
+      const tourInfo = await Tour.findOne({
+        _id: item.tourId
+      })
+      if(tourInfo){
+        item.avatar = tourInfo.avatar;
+        item.name = tourInfo.name;
+        item.departureDateFormat = moment(tourInfo.departureDateFormat).format("DD/MM/YYYY");
+        const city = await City.findOne({
+          _id: item.locationFrom
+        })
+        item.cityName = city.name;
+      }
+    }
+    res.render('admin/pages/order-edit',{
+      pageTitle: `Đơn hàng ${orderDetail.code}`,
+      orderDetail: orderDetail,
+      paymentMethodList: paymentMethodList,
+      paymentStatusList: paymentStatusList,
+      statusList: statusList
+    })
+  }
+  catch(error){
+    console.log(error)
+    res.redirect(`/${pathAdmin}/order/list`)
+  }
 }
 
 module.exports.deletePatch = async(req,res) =>{
@@ -117,6 +155,27 @@ module.exports.deletePatch = async(req,res) =>{
     res.json({
       code: "error",
       message: "Bản ghi không hợp lệ!"
+    })
+  }
+}
+
+module.exports.editPatch = async(req,res) => {
+  try{
+    const id = req.params.id;
+
+    await Order.updateOne({
+      _id: id,
+      deleted: false
+    }, req.body);
+    
+    res.json({
+      code: "success",
+      message: "Cập nhật thành công!"
+    })
+  } catch(error){
+    res.json({
+      code: "error",
+      message: "Cập nhật thất bại!"
     })
   }
 }
