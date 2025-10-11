@@ -1,5 +1,13 @@
 const AccountAdmin = require('../../models/account-admin.model')
 const Order = require('../../models/order.model')
+const {
+  paymentStatusList,
+  paymentMethodList,
+  statusList,
+  pathAdmin
+} = require('../../config/variable.config')
+const Tour = require('../../models/tour.model')
+const moment = require('moment')
 
 module.exports.dashboard=async (req,res)=>{
   // thông số tổng quan
@@ -13,16 +21,42 @@ module.exports.dashboard=async (req,res)=>{
     deleted: false
   })
 
-  const orderList = await Order.find({
+  let orderList = await Order.find({
     deleted: false
   })
   overview.totalOrder = orderList.length;
   overview.totalRevenue = orderList.reduce((total,item) => total + item.total,0);
   
+  orderList = await Order
+    .find({
+      deleted: false
+    })
+    .limit(10)
+    .sort({
+      createdAt: "desc"
+    })
+  
+    for(const orderDetail of orderList){
+      orderDetail.paymentMethodName = paymentMethodList.find(item => item.value == orderDetail.paymentMethod).label;
+      orderDetail.paymentStatusName = paymentStatusList.find(item => item.value == orderDetail.paymentStatus).label;
+      orderDetail.statusInfo= statusList.find(item => item.value == orderDetail.status);
+      orderDetail.createdAtTime = moment(orderDetail.createdAt).format("HH:mm");
+      orderDetail.createdAtDate = moment(orderDetail.createdAt).format("DD/MM/YYYY");
+      for(const item of orderDetail.items){
+        const tourInfo = await Tour.findOne({
+          _id: item.tourId
+        })
+        if(tourInfo){
+          item.avatar = tourInfo.avatar;
+          item.name = tourInfo.name;
+        }
+      }
+    }
   // End thông số tổng quan
   res.render('admin/pages/dashboard',{
     pageTitle: "Dashboard",
-    overview: overview
+    overview: overview,
+    orderList: orderList
   })
 }
 
