@@ -53,10 +53,10 @@ module.exports.permissionList = [
     label: "Sửa đơn hàng",
     value: "order-edit"
   },
-  {
-    label: "Xem người dùng",
-    value: "user-view"
-  },
+  // {
+  //   label: "Xem người dùng",
+  //   value: "user-view"
+  // },
   {
     label: "Xem thông tin liên hệ",
     value: "contact-view"

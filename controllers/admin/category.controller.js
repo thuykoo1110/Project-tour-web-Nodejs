@@ -2,7 +2,6 @@ const Category = require('../../models/catagory.model')
 const categoryHelper = require('../../helpers/category.helper.js')
 const accountAdmin = require('../../models/account-admin.model.js')
 const moment = require('moment')
-const { pathAdmin } = require('../../config/variable.config.js')
 const slugify = require('slugify')
 
 module.exports.list=async (req,res)=>{
