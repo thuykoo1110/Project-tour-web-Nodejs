@@ -137,50 +137,104 @@ if(listFilepondImageMulti.length > 0) {
 // End Filepond Image Multi
 
 // Biểu đồ doanh thu
+const drawChart = (dateFilter) => {
+  // Lấy ra ngày hiện tại
+  const now = dateFilter;
+  // Lấy ra tháng và năm
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+  // Lấy ra thông tin thánh trước
+  const previousMonthDate = new Date(currentYear, now.getMonth() - 1, 1);
+  const previousMonth = previousMonthDate.getMonth() + 1;
+  const previousYear = previousMonthDate.getFullYear();
+
+  // Lấy ra tổng số ngày
+  const daysInCurrentMonth = new Date(currentYear, currentMonth, 0).getDate();
+  const daysInPreviusMonth = new Date(currentYear, previousMonth, 0).getDate();
+  const days = daysInCurrentMonth > daysInPreviusMonth ? daysInCurrentMonth : daysInPreviusMonth;
+  const arrayDays = [];
+  for(let i = 1; i <= days; i++){
+    arrayDays.push(i);
+  }
+
+  const dataFinal = {
+    currentMonth: currentMonth,
+    currentYear:  currentYear,
+    previousMonth: previousMonth,
+    previousYear: previousYear,
+    arrayDays: arrayDays
+  }
+
+  fetch(`/${pathAdmin}/dashboard/revenue-chart`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(dataFinal)
+  })
+    .then(res => res.json())
+    .then(data => {
+      if(data.code == "success"){
+        const htmlCanvas = `<canvas></canvas>`;
+        const parentChart = document.querySelector(".section-2 .inner-chart");
+        parentChart.innerHTML = htmlCanvas;
+        const canvas = parentChart.querySelector("canvas");
+        new Chart(canvas, {
+          type: 'line',
+          data: {
+            labels: arrayDays,
+            datasets: [
+              {
+                label: `Tháng ${currentMonth}/${currentYear}`, // Nhãn của dataset
+                data: data.dataMonthCurrent, // Dữ liệu
+                borderColor: '#4379EE', // Màu viền
+                borderWidth: 1.5, // Độ dày của đường
+              },
+              {
+                label: `Tháng ${previousMonth}/${previousYear}`, // Nhãn của dataset
+                data: data.dataMonthPrevious, // Dữ liệu
+                borderColor: '#EF3826', // Màu viền
+                borderWidth: 1.5, // Độ dày của đường
+              }
+            ]
+          },
+          options: {
+            plugins: {
+              legend: {
+                position: 'bottom'
+              }
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Ngày'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Doanh thu (VND)'
+                }
+              }
+            },
+            maintainAspectRatio: false, // Không giữ tỷ lệ khung hình mặc định
+          }
+        });
+      }
+    })
+}
 const revenueChart = document.querySelector("#revenue-chart");
 if(revenueChart) {
-  new Chart(revenueChart, {
-    type: 'line',
-    data: {
-      labels: ['01', '02', '03', '04', '05'],
-      datasets: [
-        {
-          label: 'Tháng 04/2025', // Nhãn của dataset
-          data: [1200000, 1800000, 3200000, 900000, 1600000], // Dữ liệu
-          borderColor: '#4379EE', // Màu viền
-          borderWidth: 1.5, // Độ dày của đường
-        },
-        {
-          label: 'Tháng 03/2025', // Nhãn của dataset
-          data: [1000000, 900000, 1200000, 1200000, 1400000], // Dữ liệu
-          borderColor: '#EF3826', // Màu viền
-          borderWidth: 1.5, // Độ dày của đường
-        }
-      ]
-    },
-    options: {
-      plugins: {
-        legend: {
-          position: 'bottom'
-        }
-      },
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: 'Ngày'
-          }
-        },
-        y: {
-          title: {
-            display: true,
-            text: 'Doanh thu (VND)'
-          }
-        }
-      },
-      maintainAspectRatio: false, // Không giữ tỷ lệ khung hình mặc định
-    }
-  });
+  const now = new Date();
+  drawChart(now);
+
+  const inputFilterMonth = document.querySelector("[filter-month]");
+  inputFilterMonth.addEventListener("change", ()=> {
+    const value = inputFilterMonth.value;
+    const dateFilter = new Date(value);
+    drawChart(dateFilter);
+  })
 }
 // Hết Biểu đồ doanh thu
 
