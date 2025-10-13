@@ -401,8 +401,16 @@ if(orderForm) {
               cart = cart.filter(item => item.checked == false);
               localStorage.setItem("cart", JSON.stringify(cart));
 
-              drawNotify(data.code, data.message);
-              window.location.href = `/order/success?orderCode=${data.orderCode}&phone=${phone}`;
+              switch(method){
+                case "money":
+                case "bank":
+                  drawNotify(data.code, data.message);
+                  window.location.href = `/order/success?orderCode=${data.orderCode}&phone=${phone}`;
+                  break;
+                case "zalopay":
+                  window.location.href = `/order/payment-zalopay?orderCode=${data.orderCode}&phone=${phone}`;
+                  break;
+              }
             }
           })
       } else {
