@@ -881,3 +881,25 @@ if(pageCart){
   drawCart();
 }
 // End Page cart
+
+// Menu header
+const menu = document.querySelector(".inner-menu")
+if(menu){
+  const menuList = menu.querySelectorAll("a");
+  const pathNameCurrent = location.pathname;
+  menuList.forEach( link => {
+    const href = link.getAttribute("href");
+    if (href === pathNameCurrent) {
+      link.classList.add("active");
+
+      // Tìm menu cha (nếu có)
+      const parentUl = link.closest("ul");
+      if (parentUl && parentUl.previousElementSibling && parentUl.previousElementSibling.classList.contains("fa-caret-down")) {
+        const parentLink = parentUl.previousElementSibling.previousElementSibling;
+        if (parentLink) {
+          parentLink.classList.add("active");
+        }
+      }}
+  })
+}
+// End menu header

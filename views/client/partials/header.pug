@@ -36,7 +36,7 @@ header.header
       nav.inner-menu
         ul
           li
-            a.active(href="/") Trang chủ
+            a(href="/") Trang chủ
           each item in categoryList
             li
               a(href=`/category/${item.slug}`) #{item.name}

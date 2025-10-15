@@ -31,6 +31,11 @@ block main
           select(id="dataSection4" name="dataSection4")
             option(value="") -- Chọn danh mục --
             +options(categoryList,0,settingWebsiteInfo.dataSection4)
+        .inner-group
+          label(class="inner-label" for="dataSection6") Dữ liệu Section 6
+          select(id="dataSection6" name="dataSection6")
+            option(value="") -- Chọn danh mục --
+            +options(categoryList,0,settingWebsiteInfo.dataSection6)
         .inner-button.inner-two-col
           button Cập nhật
       .inner-back

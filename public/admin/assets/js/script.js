@@ -701,7 +701,7 @@ if(settingWebsiteInfoForm) {
         favicon = favicons[0].file;
       }
       const dataSection4 = event.target.dataSection4.value;
-
+      const dataSection6 = event.target.dataSection6.value;
       const formData = new FormData();
       formData.append("websiteName", websiteName);
       formData.append("phone", phone);
@@ -710,6 +710,7 @@ if(settingWebsiteInfoForm) {
       formData.append("logo", logo);
       formData.append("favicon", favicon);
       formData.append("dataSection4",dataSection4);
+      formData.append("dataSection6",dataSection6);
 
       fetch(`/${pathAdmin}/setting/website-info`,{
         method: "PATCH",
