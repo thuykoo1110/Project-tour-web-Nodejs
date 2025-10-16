@@ -76,10 +76,10 @@ module.exports.paymentMethodList = [
     label: "Tiền mặt",
     value: "money"
   },
-  {
-    label: "Chuyển khoản ngân hàng",
-    value: "bank"
-  },
+  // {
+  //   label: "Chuyển khoản ngân hàng",
+  //   value: "bank"
+  // },
   {
     label: "Ví Momo",
     value: "momo"

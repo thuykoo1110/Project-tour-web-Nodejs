@@ -11,6 +11,8 @@ const City = require('../../models/city.model')
 const axios = require('axios').default;
 const CryptoJS = require('crypto-js');
 const { sortObject } = require('../../helpers/sort.helper')
+const https = require('https')
+const crypto = require('crypto');
 
 module.exports.createPost = async (req, res) =>{
   try{
@@ -306,5 +308,152 @@ module.exports.paymentVNPayResult =  async(req, res) => {
     }
   } else{
     res.redirect('/')
+  }
+}
+
+module.exports.paymentMomo = async(req, res) => {
+  try {
+    const { orderCode, phone } = req.query;
+
+    const orderDetail = await Order.findOne({
+      code: orderCode,
+      phone: phone
+    })
+
+    if(!orderDetail){
+      res.redirect('/');
+      return;
+    }
+    const accessKey = 'F8BBA842ECF85';
+    const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
+    const partnerCode = 'MOMO';
+    const requestType = 'payWithATM';
+    const redirectUrl = `${process.env.WEBSITE_DOMAIN}/order/success?orderCode=${orderCode}&phone=${phone}`;
+    const ipnUrl = `${process.env.WEBSITE_DOMAIN}/order/momo-ipn`;
+    const amount = orderDetail.total;
+    const orderInfo = `Thanh toán MoMo cho đơn hàng ${orderCode}`;
+    const orderId = `${phone}-${orderCode}-${Date.now()}`
+    const requestId = orderId;
+    const extraData = ''; // có thể encode base64 nếu muốn gửi thêm thông tin
+
+    // Tạo chữ ký HMAC SHA256
+    const rawSignature =
+      `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}` +
+      `&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}` +
+      `&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}` +
+      `&requestId=${requestId}&requestType=${requestType}`;
+
+    const signature = crypto.createHmac('sha256', secretKey)
+      .update(rawSignature)
+      .digest('hex');
+
+    const requestBody = JSON.stringify({
+      partnerCode,
+      partnerName: "MyShop",
+      storeId: "MomoTestStore",
+      requestId,
+      amount,
+      orderId,
+      orderInfo,
+      redirectUrl,
+      ipnUrl,
+      requestType,
+      extraData,
+      signature,
+    });
+
+    // Gửi request đến MoMo
+    const options = {
+      hostname: 'test-payment.momo.vn',
+      port: 443,
+      path: '/v2/gateway/api/create',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(requestBody),
+      },
+    };
+
+    const momoReq = https.request(options, momoRes => {
+      let data = '';
+      momoRes.on('data', chunk => data += chunk);
+      momoRes.on('end', () => {
+        const result = JSON.parse(data);
+
+        if (result && result.payUrl) {
+          //  Chuyển hướng người dùng sang trang thanh toán MoMo
+          res.redirect(result.payUrl);
+        } else {
+          res.status(400).json({ message: 'Không nhận được payUrl từ MoMo', result });
+        }
+      });
+    });
+
+    momoReq.on('error', e => {
+      console.error(e);
+      res.status(500).json({ message: 'Lỗi kết nối MoMo', error: e.message });
+    });
+
+    momoReq.write(requestBody);
+    momoReq.end();
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+module.exports.momoResult = async(req, res)  => {
+  try {
+    const data = req.body;
+
+    const {
+      amount, orderId, orderInfo, orderType, partnerCode, requestId,
+      responseTime, resultCode, transId, message, payType, extraData
+    } = data;
+
+    //Tạo chữ ký để kiểm tra
+    const accessKey = 'F8BBA842ECF85';
+    const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
+    const rawSignature =
+      `accessKey=${accessKey}` +
+      `&amount=${amount}` +
+      `&extraData=${extraData}` +
+      `&message=${message}` +
+      `&orderId=${orderId}` +
+      `&orderInfo=${orderInfo}` +
+      `&orderType=${orderType}` +
+      `&partnerCode=${partnerCode}` +
+      `&payType=${payType}` +
+      `&requestId=${requestId}` +
+      `&responseTime=${responseTime}` +
+      `&resultCode=${resultCode}` +
+      `&transId=${transId}`;
+
+    const signature = crypto.createHmac('sha256', secretKey)
+      .update(rawSignature)
+      .digest('hex');
+
+    // Kiểm tra chữ ký
+    if (signature !== data.signature) {
+      return res.status(400).json({ message: 'Invalid signature' });
+    }
+
+    // Xử lý kết quả thanh toán
+    if (parseInt(resultCode) === 0) {
+      const orderIdParts = orderId.split("-");
+      const phone = orderIdParts[0];
+      const orderCode = orderIdParts[1];
+      await Order.updateOne(
+        { phone: phone, code: orderCode },
+        { paymentStatus: "paid" }
+      );
+    }
+    // Bắt buộc trả 200 OK cho MoMo, để họ không gửi lại
+    res.status(200).json({ message: 'Received IPN' });
+
+  } catch (error) {
+    console.error('Lỗi xử lý IPN:', error);
+    res.status(500).json({ message: 'Server Error' });
   }
 }

@@ -403,7 +403,7 @@ if(orderForm) {
 
               switch(method){
                 case "money":
-                case "bank":
+                // case "bank":
                   drawNotify(data.code, data.message);
                   window.location.href = `/order/success?orderCode=${data.orderCode}&phone=${phone}`;
                   break;
@@ -412,6 +412,9 @@ if(orderForm) {
                   break;
                 case "vnpay":
                   window.location.href = `/order/payment-vnpay?orderCode=${data.orderCode}&phone=${phone}`;
+                  break;
+                case "momo":
+                  window.location.href = `/order/payment-momo?orderCode=${data.orderCode}&phone=${phone}`;
                   break;
               }
             }
