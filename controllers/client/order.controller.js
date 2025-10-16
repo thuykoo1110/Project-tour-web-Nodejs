@@ -324,8 +324,8 @@ module.exports.paymentMomo = async(req, res) => {
       res.redirect('/');
       return;
     }
-    const accessKey = 'F8BBA842ECF85';
-    const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
+    const accessKey = process.env.MOMO_ACCESS_KEY;
+    const secretKey = process.env.MOMO_SECRET_KEY;
     const partnerCode = 'MOMO';
     const requestType = 'payWithATM';
     const redirectUrl = `${process.env.WEBSITE_DOMAIN}/order/success?orderCode=${orderCode}&phone=${phone}`;
@@ -413,8 +413,8 @@ module.exports.momoResult = async(req, res)  => {
     } = data;
 
     //Tạo chữ ký để kiểm tra
-    const accessKey = 'F8BBA842ECF85';
-    const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
+    const accessKey = process.env.MOMO_ACCESS_KEY;
+    const secretKey = process.env.MOMO_SECRET_KEY;
     const rawSignature =
       `accessKey=${accessKey}` +
       `&amount=${amount}` +
